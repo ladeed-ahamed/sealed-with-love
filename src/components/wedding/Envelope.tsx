@@ -9,7 +9,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
   const handleOpen = () => {
     if (opening) return;
     setOpening(true);
-    window.setTimeout(onOpen, reduce ? 200 : 2400);
+    window.setTimeout(onOpen, reduce ? 200 : 2000);
   };
 
   return (
@@ -26,7 +26,11 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
       <motion.div
         className="relative aspect-[1.55/1] cursor-pointer select-none"
         whileHover={{ y: -4 }}
-        transition={{ type: "spring", stiffness: 160, damping: 16 }}
+        animate={
+          opening
+            ? { opacity: [1, 1, 0], scale: [1, 1, 0.9], transition: { duration: 3.5, times: [0, 0.75, 1], ease: "easeInOut" } }
+            : { opacity: 1, scale: 1 }
+        }
         onClick={handleOpen}
         role="button"
         aria-label="Open the invitation"
@@ -64,9 +68,22 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
               "0 12px 30px -10px rgba(0,0,0,0.45), inset 0 0 0 1px color-mix(in oklab, var(--rosegold) 35%, transparent)",
             zIndex: 1,
           }}
-          initial={{ y: "0%" }}
-          animate={opening ? { y: "-60%", scale: 1.05 } : { y: "0%" }}
-          transition={{ duration: 1.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ y: "0%", scale: 1, opacity: 1 }}
+          animate={
+            opening 
+              ? { 
+                  y: ["0%", "-80%", "-130%"], 
+                  scale: [1, 1.05, 1.2],
+                  opacity: [1, 1, 0]
+                } 
+              : { y: "0%", scale: 1, opacity: 1 }
+          }
+          transition={{ 
+            duration: 2.0, 
+            delay: 0.6, 
+            times: [0, 0.5, 1],
+            ease: "easeInOut" 
+          }}
         >
           <div className="flex h-full flex-col items-center justify-center px-6 text-center">
             <p className="font-label text-[10px] text-rosegold sm:text-xs">Wedding</p>
@@ -80,7 +97,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
           style={{ height: "62%", zIndex: 2, transformPerspective: 900 }}
           initial={{ rotateX: 0 }}
           animate={opening ? { rotateX: -178 } : { rotateX: 0 }}
-          transition={{ duration: 1.4, ease: [0.65, 0, 0.35, 1] }}
+          transition={{ duration: 1.8, ease: [0.65, 0, 0.35, 1] }}
         >
           <div
             className="h-full w-full"

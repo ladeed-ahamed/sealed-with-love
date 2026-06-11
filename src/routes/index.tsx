@@ -8,6 +8,7 @@ import { Envelope } from "@/components/wedding/Envelope";
 import { Countdown } from "@/components/wedding/Countdown";
 import { Reveal, Divider } from "@/components/wedding/Reveal";
 import { MusicPlayer } from "@/components/wedding/MusicPlayer";
+import { ScratchToReveal } from "@/components/wedding/ScratchToReveal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -184,11 +185,11 @@ function Index() {
                 <CornerOrnament className="pointer-events-none absolute right-2 top-2 h-14 w-14 text-rosegold/60" flipX />
                 <CornerOrnament className="pointer-events-none absolute bottom-2 left-2 h-14 w-14 text-rosegold/60" flipY />
                 <CornerOrnament className="pointer-events-none absolute bottom-2 right-2 h-14 w-14 text-rosegold/60" flipX flipY />
-
-                <h3 className="mt-3 font-script text-4xl text-ink sm:text-5xl">
-                  {wedding.event.culturalName}
-                </h3>
-                <Divider className="my-6" />
+                <ScratchToReveal>
+                  <h3 className="mt-3 font-script text-4xl text-ink sm:text-5xl">
+                    {wedding.event.culturalName}
+                  </h3>
+                  <Divider className="my-6" />
 
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
@@ -207,18 +208,19 @@ function Index() {
                   </div>
                 </div>
 
-                <a
-                  href={wedding.event.maps}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-8 inline-flex items-center gap-2 rounded-sm border border-rosegold/60 bg-rosegold/10 px-6 py-3 font-label text-[11px] tracking-[0.25em] text-ink transition-all duration-300 hover:-translate-y-0.5 hover:bg-rosegold hover:text-primary-foreground"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 22s8-7 8-13a8 8 0 10-16 0c0 6 8 13 8 13z" />
-                    <circle cx="12" cy="9" r="3" />
-                  </svg>
-                  OPEN MAPS
-                </a>
+                  <a
+                    href={wedding.event.maps}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-8 inline-flex items-center gap-2 rounded-sm border border-rosegold/60 bg-rosegold/10 px-6 py-3 font-label text-[11px] tracking-[0.25em] text-ink transition-all duration-300 hover:-translate-y-0.5 hover:bg-rosegold hover:text-primary-foreground"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 22s8-7 8-13a8 8 0 10-16 0c0 6 8 13 8 13z" />
+                      <circle cx="12" cy="9" r="3" />
+                    </svg>
+                    OPEN MAPS
+                  </a>
+                </ScratchToReveal>
               </motion.div>
             </Reveal>
           </div>
