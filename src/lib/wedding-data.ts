@@ -25,12 +25,12 @@ export const wedding = {
 
   event: {
     label: "Nikah Ceremony",
-    culturalName: "Wedding Reception & Blessings",
+    culturalName: "Nikah & Walimah",
 
     date: "Monday, 27 July 2026",
 
     secondaryDate:
-      "In the presence of family, friends, and the blessings of Allah",
+      "12 Safar 1448 AH",
 
     time: "11:30 AM onwards",
 

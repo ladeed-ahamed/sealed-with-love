@@ -13,15 +13,20 @@ export function MusicPlayer() {
     const audio = new Audio(SONG_URL);
     audio.loop = true;
     audio.volume = 0.35;
+    // Start muted — browsers always allow muted autoplay
+    audio.muted = true;
     audioRef.current = audio;
 
-    // Attempt autoplay immediately
     audio.play()
       .then(() => {
+        // Immediately unmute after play() is accepted
+        audio.muted = false;
         setPlaying(true);
+        setAutoplayBlocked(false);
       })
       .catch(() => {
-        // Browser blocked autoplay — start on first user interaction
+        // Absolute fallback: wait for first interaction
+        audio.muted = false;
         setAutoplayBlocked(true);
 
         const startOnInteraction = () => {
@@ -31,11 +36,6 @@ export function MusicPlayer() {
               setAutoplayBlocked(false);
             })
             .catch(() => {});
-
-          // Remove all listeners once triggered
-          ["click", "touchstart", "keydown", "scroll"].forEach((evt) =>
-            document.removeEventListener(evt, startOnInteraction)
-          );
         };
 
         ["click", "touchstart", "keydown", "scroll"].forEach((evt) =>
