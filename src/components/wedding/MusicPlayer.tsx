@@ -13,39 +13,42 @@ export function MusicPlayer() {
     const audio = new Audio(SONG_URL);
     audio.loop = true;
     audio.volume = 0.35;
-    // Start muted — browsers always allow muted autoplay
-    audio.muted = true;
     audioRef.current = audio;
 
-    audio.play()
-      .then(() => {
-        // Immediately unmute after play() is accepted
-        audio.muted = false;
+    const startAudio = async () => {
+      try {
+        await audio.play();
         setPlaying(true);
         setAutoplayBlocked(false);
+        // Remove listeners once successfully started
+        ["click", "touchstart", "scroll"].forEach((evt) =>
+          document.removeEventListener(evt, startAudio)
+        );
+      } catch (err) {
+        // Still blocked, wait for next interaction
+      }
+    };
+
+    // Try to play immediately (works on desktop sometimes)
+    audio.play()
+      .then(() => {
+        setPlaying(true);
       })
       .catch(() => {
-        // Absolute fallback: wait for first interaction
-        audio.muted = false;
+        // Blocked by browser policy. 
+        // We will start it the moment the user taps the envelope.
         setAutoplayBlocked(true);
-
-        const startOnInteraction = () => {
-          audio.play()
-            .then(() => {
-              setPlaying(true);
-              setAutoplayBlocked(false);
-            })
-            .catch(() => {});
-        };
-
-        ["click", "touchstart", "keydown", "scroll"].forEach((evt) =>
-          document.addEventListener(evt, startOnInteraction, { once: true })
+        ["click", "touchstart", "scroll"].forEach((evt) =>
+          document.addEventListener(evt, startAudio, { once: false })
         );
       });
 
     return () => {
       audio.pause();
       audio.src = "";
+      ["click", "touchstart", "scroll"].forEach((evt) =>
+        document.removeEventListener(evt, startAudio)
+      );
     };
   }, []);
 
