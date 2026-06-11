@@ -46,7 +46,7 @@ export const wedding = {
   },
 
   closingBlessing:
-    "We would be honored by your presence and prayers as we celebrate this blessed occasion. May Allah fill their lives with love, mercy, tranquility, and endless barakah.",
+    "\"And of His signs is that He created for you from yourselves mates that you may find tranquility in them; and He placed between you affection and mercy.\" (Quran 30:21)",
 
   closingWord: "Alhamdulillah",
 
