@@ -41,8 +41,7 @@ export function Countdown({ iso }: { iso: string }) {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="font-display text-4xl font-medium text-ink sm:text-6xl"
+                className="font-display tabular-nums lining-nums text-4xl font-medium text-ink sm:text-6xl"
               >
                 {String(value).padStart(2, "0")}
               </motion.div>

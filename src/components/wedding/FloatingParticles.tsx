@@ -44,23 +44,18 @@ export function FloatingParticles({ count = 40 }: { count?: number }) {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       {particles.map((p) => {
-        const color =
-          p.kind === "heart"
-            ? "text-rosegold/30"
-            : p.kind === "petal"
-              ? "text-rosegold-soft/35"
-              : "text-rosegold/40";
+        const color = "text-rosegold/30";
         return (
           <motion.div
             key={p.id}
             className={`absolute ${color}`}
-            style={{ left: `${p.left}%`, top: "-5%" }}
+            style={{ left: `${p.left}%`, bottom: "-5%" }}
             initial={{ y: 0, x: 0, opacity: 0, rotate: 0 }}
             animate={{
-              y: "115vh",
+              y: "-115vh",
               x: p.drift,
               opacity: [0, 0.6, 0.6, 0],
-              rotate: 360,
+              rotate: 45,
             }}
             transition={{
               duration: p.duration,
@@ -69,16 +64,7 @@ export function FloatingParticles({ count = 40 }: { count?: number }) {
               ease: "linear",
             }}
           >
-            {p.kind === "heart" ? (
-              <Heart size={p.size} />
-            ) : p.kind === "petal" ? (
-              <Petal size={p.size} />
-            ) : (
-              <div
-                className="rounded-full bg-rosegold/50"
-                style={{ width: p.size / 3, height: p.size / 3 }}
-              />
-            )}
+            <Heart size={p.size} />
           </motion.div>
         );
       })}

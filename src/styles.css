@@ -50,14 +50,14 @@
 
 :root {
   --radius: 0.5rem;
-  --parchment: oklch(0.96 0.02 80);
-  --parchment-deep: oklch(0.92 0.03 75);
-  --rosegold: oklch(0.68 0.11 55);
-  --rosegold-soft: oklch(0.80 0.08 60);
-  --ink: oklch(0.32 0.05 45);
-  --ink-muted: oklch(0.55 0.05 50);
-  --envelope: oklch(0.30 0.06 40);
-  --wax: oklch(0.42 0.14 30);
+  --parchment: oklch(0.97 0.02 85); /* Cream background */
+  --parchment-deep: oklch(0.92 0.03 80); /* Slightly darker cream */
+  --rosegold: oklch(0.68 0.14 65); /* Golden brown accent */
+  --rosegold-soft: oklch(0.80 0.08 70); /* Soft gold accent */
+  --ink: oklch(0.32 0.06 50); /* Deep Brown text */
+  --ink-muted: oklch(0.50 0.08 55); /* Muted brown text */
+  --envelope: oklch(0.92 0.03 80); /* Cream envelope */
+  --wax: oklch(0.68 0.14 65); /* Gold wax seal */
 
   --background: var(--parchment);
   --foreground: var(--ink);
@@ -89,7 +89,7 @@
     background-image:
       radial-gradient(circle at 20% 10%, color-mix(in oklab, var(--rosegold-soft) 18%, transparent), transparent 45%),
       radial-gradient(circle at 80% 90%, color-mix(in oklab, var(--rosegold-soft) 14%, transparent), transparent 50%),
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.22  0 0 0 0 0.12  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.90  0 0 0 0 0.80  0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   }
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: 0.01em; }
 }
@@ -101,15 +101,15 @@
 @utility font-arabic { font-family: var(--font-arabic); }
 
 @utility parchment-card {
-  background: linear-gradient(180deg, oklch(0.99 0.012 80) 0%, oklch(0.97 0.018 75) 100%);
+  background: linear-gradient(180deg, var(--card), color-mix(in oklab, var(--card) 95%, black));
   border: 1px solid color-mix(in oklab, var(--rosegold) 35%, transparent);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 20px 40px -20px color-mix(in oklab, var(--ink) 15%, transparent);
   position: relative;
   &::before {
     content: "";
     position: absolute;
-    inset: 8px;
-    border: 1px solid color-mix(in oklab, var(--rosegold) 25%, transparent);
+    inset: 6px;
+    border: 1px solid color-mix(in oklab, var(--rosegold) 20%, transparent);
     pointer-events: none;
     border-radius: inherit;
   }

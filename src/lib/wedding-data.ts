@@ -19,7 +19,7 @@ export const wedding = {
     "In the name of Allah, the Most Gracious, the Most Merciful",
 
   body:
-    "By the grace and blessings of Allah سبحانه وتعالى, we joyfully invite you to witness and celebrate the sacred union of our beloved children as they embark upon a beautiful journey of faith, love, and companionship through Nikah.",
+    "We would be honored by your presence and prayers as we celebrate this blessed occasion. May Allah fill their lives with love, mercy, tranquility, and endless barakah.",
 
   culturalPhrase: "بارك الله لكما وبارك عليكما وجمع بينكما في خير",
 
