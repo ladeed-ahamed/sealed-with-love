@@ -116,13 +116,13 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
         >
           <div className="text-center leading-none">
             <div className="font-script text-[11px] text-rosegold-soft sm:text-xs">
-              A
+              {wedding.groom.firstName}
             </div>
             <div className="font-label text-[9px] tracking-widest text-rosegold-soft sm:text-[10px]">
               &amp;
             </div>
             <div className="font-script text-[11px] text-rosegold-soft sm:text-xs">
-              A
+              {wedding.bride.firstName}
             </div>
           </div>
         </motion.div>
@@ -171,7 +171,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
         — TAP THE SEAL TO OPEN —
       </motion.p>
 
-      <span className="sr-only">{wedding.groom.name} and {wedding.bride.name}</span>
+      <span className="sr-only">{wedding.groom.firstName} and {wedding.bride.firstName}</span>
     </div>
   );
 }

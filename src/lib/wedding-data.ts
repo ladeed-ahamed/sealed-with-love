@@ -1,32 +1,57 @@
 export const wedding = {
   hosts: "Together with their families",
+
   groom: {
-    name: "Aarav Sharma",
-    subtitle: "Son of Mr. Rajiv & Mrs. Meera Sharma",
+    firstName: "Razeen",
+    name: "Mohammed Razeen",
+    subtitle: "S/O Faizal Seethi Marakkarakam & Liza Puthiya Kadiyarakam",
   },
+
   bride: {
-    name: "Anaya Kapoor",
-    subtitle: "Daughter of Mr. Vikram & Mrs. Priya Kapoor",
+    firstName: "Aaliya",
+    name: "Aaliya Mubarak",
+    subtitle: "D/O Mubarak Puthiya Srangintakam & Ameena Aboobacker Pathaya Pura",
   },
+
   openingLine: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
-  openingTranslation: "In the name of love, with the blessings of the divine.",
+
+  openingTranslation:
+    "In the name of Allah, the Most Gracious, the Most Merciful",
+
   body:
-    "With hearts full of joy and gratitude, we invite you to share in a moment woven of promises, prayers, and the quiet music of two souls becoming one.",
-  culturalPhrase: "Shubh Vivah · شادی مبارک",
+    "By the grace and blessings of Allah سبحانه وتعالى, we joyfully invite you to witness and celebrate the sacred union of our beloved children as they embark upon a beautiful journey of faith, love, and companionship through Nikah.",
+
+  culturalPhrase: "بارك الله لكما وبارك عليكما وجمع بينكما في خير",
+
   event: {
-    label: "The Wedding Ceremony",
-    culturalName: "Vivaah Sanskar",
-    date: "Saturday, 14 February 2026",
-    secondaryDate: "Phalguna Shukla Paksha · Shubh Muhurat",
-    time: "6:30 PM onwards",
-    venue: "The Leela Palace · Crystal Ballroom",
-    address: "Diplomatic Enclave, Chanakyapuri, New Delhi 110023",
-    maps: "https://www.google.com/maps/search/?api=1&query=The+Leela+Palace+New+Delhi",
-    iso: "2026-02-14T18:30:00+05:30",
+    label: "Nikah Ceremony",
+    culturalName: "Wedding Reception & Blessings",
+
+    date: "Monday, 27 July 2026",
+
+    secondaryDate:
+      "In the presence of family, friends, and the blessings of Allah",
+
+    time: "11:30 AM onwards",
+
+    venue: "Sumangali Kalyana Mandapam",
+
+    address:
+      "Sumangali, 37/176 TC Land Rd, Kallai, Road, Panniyankara, Kozhikode, Kerala 673003, India",
+
+    maps:
+      "https://share.google/e8Pjtuf2Rbm4rtwy8",
+
+    iso: "2026-07-27T11:30:00+05:30",
   },
+
   closingBlessing:
-    "May your presence bless this union with joy, your laughter fill the halls, and your love walk with them all the days to come.",
-  closingWord: "Forever",
-  closingScript: "with love & light",
-  footerTagline: "Crafted with love · Aarav & Anaya · 2026",
+    "We would be honored by your presence and prayers as we celebrate this blessed occasion. May Allah fill their lives with love, mercy, tranquility, and endless barakah.",
+
+  closingWord: "Alhamdulillah",
+
+  closingScript: "With prayers & gratitude",
+
+  footerTagline:
+    "Crafted with love · Razeen & Aaliya · 2026",
 };

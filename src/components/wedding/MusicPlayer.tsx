@@ -7,8 +7,7 @@ const SONG_URL = "/audio/wedding-song.mp3";
 export function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [showHint, setShowHint] = useState(true);
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
 
   useEffect(() => {
     const audio = new Audio(SONG_URL);
@@ -16,16 +15,37 @@ export function MusicPlayer() {
     audio.volume = 0.35;
     audioRef.current = audio;
 
-    audio.addEventListener("canplaythrough", () => setLoaded(true));
-    audio.load();
+    // Attempt autoplay immediately
+    audio.play()
+      .then(() => {
+        setPlaying(true);
+      })
+      .catch(() => {
+        // Browser blocked autoplay — start on first user interaction
+        setAutoplayBlocked(true);
 
-    // Hide the "tap to play music" hint after 5s
-    const timer = setTimeout(() => setShowHint(false), 5000);
+        const startOnInteraction = () => {
+          audio.play()
+            .then(() => {
+              setPlaying(true);
+              setAutoplayBlocked(false);
+            })
+            .catch(() => {});
+
+          // Remove all listeners once triggered
+          ["click", "touchstart", "keydown", "scroll"].forEach((evt) =>
+            document.removeEventListener(evt, startOnInteraction)
+          );
+        };
+
+        ["click", "touchstart", "keydown", "scroll"].forEach((evt) =>
+          document.addEventListener(evt, startOnInteraction, { once: true })
+        );
+      });
 
     return () => {
       audio.pause();
       audio.src = "";
-      clearTimeout(timer);
     };
   }, []);
 
@@ -38,14 +58,13 @@ export function MusicPlayer() {
     } else {
       audio.play().then(() => setPlaying(true)).catch(() => {});
     }
-    setShowHint(false);
   };
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-      {/* Hint label */}
+      {/* Autoplay blocked hint */}
       <AnimatePresence>
-        {showHint && (
+        {autoplayBlocked && (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -53,7 +72,7 @@ export function MusicPlayer() {
             transition={{ duration: 0.4 }}
             className="rounded-full border border-rosegold/40 bg-background/90 px-4 py-1.5 font-label text-[10px] tracking-[0.2em] text-rosegold shadow-lg backdrop-blur-sm"
           >
-            ♪ TAP TO PLAY MUSIC
+            ♪ TAP ANYWHERE TO PLAY
           </motion.div>
         )}
       </AnimatePresence>
@@ -88,7 +107,6 @@ export function MusicPlayer() {
 
         {/* Icon */}
         {playing ? (
-          // Pause icon
           <svg
             width="18"
             height="18"
@@ -100,7 +118,6 @@ export function MusicPlayer() {
             <rect x="14" y="4" width="4" height="16" rx="1" />
           </svg>
         ) : (
-          // Music note icon
           <svg
             width="20"
             height="20"
@@ -117,7 +134,7 @@ export function MusicPlayer() {
         )}
       </motion.button>
 
-      {/* Song label */}
+      {/* Now playing label */}
       <AnimatePresence>
         {playing && (
           <motion.div
@@ -127,7 +144,7 @@ export function MusicPlayer() {
             transition={{ duration: 0.3 }}
             className="rounded-full border border-rosegold/30 bg-background/80 px-3 py-1 font-label text-[9px] tracking-[0.15em] text-rosegold-soft backdrop-blur-sm"
           >
-            ♪ Tum Hi Ho · Wedding Edition
+            ♪ Now Playing
           </motion.div>
         )}
       </AnimatePresence>
