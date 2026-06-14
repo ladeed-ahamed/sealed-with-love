@@ -16,16 +16,14 @@ function l(e) {
         get() {
           return null;
         },
-        set() {
-        }
+        set() {},
       },
       _currentRenderer2: {
         get() {
           return null;
         },
-        set() {
-        }
-      }
+        set() {},
+      },
     });
   } catch (t) {
     return e;
@@ -34,7 +32,11 @@ function l(e) {
 const a = /* @__PURE__ */ l(/* @__PURE__ */ reactExports.createContext(null));
 class m extends reactExports.Component {
   render() {
-    return /* @__PURE__ */ reactExports.createElement(a.Provider, { value: this._reactInternals }, this.props.children);
+    return /* @__PURE__ */ reactExports.createElement(
+      a.Provider,
+      { value: this._reactInternals },
+      this.props.children,
+    );
   }
 }
 function c() {
@@ -55,30 +57,33 @@ function c() {
     }
   }, [e, t]);
 }
-const p = /* @__PURE__ */ Symbol.for("react.context"), b = (e) => e !== null && typeof e == "object" && "$$typeof" in e && e.$$typeof === p;
+const p = /* @__PURE__ */ Symbol.for("react.context"),
+  b = (e) => e !== null && typeof e == "object" && "$$typeof" in e && e.$$typeof === p;
 function h() {
-  const e = c(), [t] = reactExports.useState(() => /* @__PURE__ */ new Map());
+  const e = c(),
+    [t] = reactExports.useState(() => /* @__PURE__ */ new Map());
   t.clear();
   let r = e;
   for (; r; ) {
     const n = r.type;
-    b(n) && n !== a && !t.has(n) && t.set(n, reactExports.use(l(n))), r = r.return;
+    (b(n) && n !== a && !t.has(n) && t.set(n, reactExports.use(l(n))), (r = r.return));
   }
   return t;
 }
 function x() {
   const e = h();
   return reactExports.useMemo(
-    () => Array.from(e.keys()).reduce(
-      (t, r) => (n) => /* @__PURE__ */ reactExports.createElement(t, null, /* @__PURE__ */ reactExports.createElement(r.Provider, { ...n, value: e.get(r) })),
-      (t) => /* @__PURE__ */ reactExports.createElement(m, { ...t })
-    ),
-    [e]
+    () =>
+      Array.from(e.keys()).reduce(
+        (t, r) => (n) =>
+          /* @__PURE__ */ reactExports.createElement(
+            t,
+            null,
+            /* @__PURE__ */ reactExports.createElement(r.Provider, { ...n, value: e.get(r) }),
+          ),
+        (t) => /* @__PURE__ */ reactExports.createElement(m, { ...t }),
+      ),
+    [e],
   );
 }
-export {
-  c,
-  i,
-  m,
-  x
-};
+export { c, i, m, x };

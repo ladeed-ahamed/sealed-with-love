@@ -9,7 +9,7 @@ export function ScratchToReveal({ children }: ScratchToRevealProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
-  
+
   const CANVAS_WIDTH = 260;
   const CANVAS_HEIGHT = 70;
 
@@ -80,8 +80,8 @@ export function ScratchToReveal({ children }: ScratchToRevealProps) {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const pixels = imageData.data;
     let transparentPixels = 0;
-    
-    const step = 4 * 4; 
+
+    const step = 4 * 4;
     let totalChecked = 0;
 
     for (let i = 3; i < pixels.length; i += step) {
@@ -90,7 +90,7 @@ export function ScratchToReveal({ children }: ScratchToRevealProps) {
     }
 
     const clearPercentage = transparentPixels / totalChecked;
-    if (clearPercentage > 0.40) {
+    if (clearPercentage > 0.4) {
       setIsRevealed(true);
     }
   };
@@ -98,7 +98,7 @@ export function ScratchToReveal({ children }: ScratchToRevealProps) {
   return (
     <div className="relative mx-auto w-full">
       {/* Hidden content */}
-      <div 
+      <div
         className="transition-all duration-1000"
         style={{
           opacity: isRevealed ? 1 : 0.15,
@@ -117,7 +117,7 @@ export function ScratchToReveal({ children }: ScratchToRevealProps) {
               ref={canvasRef}
               onPointerDown={(e) => {
                 setIsDrawing(true);
-                scratch(e); 
+                scratch(e);
               }}
               onPointerMove={scratch}
               onPointerUp={() => setIsDrawing(false)}

@@ -1,4 +1,10 @@
-import { Y as MeshDistanceMaterial, Z as MeshDepthMaterial, _ as RGBADepthPacking, G as UniformsUtils, $ as ShaderChunk } from "./three.mjs";
+import {
+  Y as MeshDistanceMaterial,
+  Z as MeshDepthMaterial,
+  _ as RGBADepthPacking,
+  G as UniformsUtils,
+  $ as ShaderChunk,
+} from "./three.mjs";
 const voidMainRegExp = /\bvoid\s+main\s*\(\s*\)\s*{/g;
 function expandShaderIncludes(source) {
   const pattern = /^[ \t]*#include +<([\w\d./]+)>/gm;
@@ -13,27 +19,49 @@ for (let i = 0; i < 256; i++) {
   _lut[i] = (i < 16 ? "0" : "") + i.toString(16);
 }
 function generateUUID() {
-  const d0 = Math.random() * 4294967295 | 0;
-  const d1 = Math.random() * 4294967295 | 0;
-  const d2 = Math.random() * 4294967295 | 0;
-  const d3 = Math.random() * 4294967295 | 0;
-  const uuid = _lut[d0 & 255] + _lut[d0 >> 8 & 255] + _lut[d0 >> 16 & 255] + _lut[d0 >> 24 & 255] + "-" + _lut[d1 & 255] + _lut[d1 >> 8 & 255] + "-" + _lut[d1 >> 16 & 15 | 64] + _lut[d1 >> 24 & 255] + "-" + _lut[d2 & 63 | 128] + _lut[d2 >> 8 & 255] + "-" + _lut[d2 >> 16 & 255] + _lut[d2 >> 24 & 255] + _lut[d3 & 255] + _lut[d3 >> 8 & 255] + _lut[d3 >> 16 & 255] + _lut[d3 >> 24 & 255];
+  const d0 = (Math.random() * 4294967295) | 0;
+  const d1 = (Math.random() * 4294967295) | 0;
+  const d2 = (Math.random() * 4294967295) | 0;
+  const d3 = (Math.random() * 4294967295) | 0;
+  const uuid =
+    _lut[d0 & 255] +
+    _lut[(d0 >> 8) & 255] +
+    _lut[(d0 >> 16) & 255] +
+    _lut[(d0 >> 24) & 255] +
+    "-" +
+    _lut[d1 & 255] +
+    _lut[(d1 >> 8) & 255] +
+    "-" +
+    _lut[((d1 >> 16) & 15) | 64] +
+    _lut[(d1 >> 24) & 255] +
+    "-" +
+    _lut[(d2 & 63) | 128] +
+    _lut[(d2 >> 8) & 255] +
+    "-" +
+    _lut[(d2 >> 16) & 255] +
+    _lut[(d2 >> 24) & 255] +
+    _lut[d3 & 255] +
+    _lut[(d3 >> 8) & 255] +
+    _lut[(d3 >> 16) & 255] +
+    _lut[(d3 >> 24) & 255];
   return uuid.toUpperCase();
 }
-const assign = Object.assign || function() {
-  let target = arguments[0];
-  for (let i = 1, len = arguments.length; i < len; i++) {
-    let source = arguments[i];
-    if (source) {
-      for (let prop in source) {
-        if (Object.prototype.hasOwnProperty.call(source, prop)) {
-          target[prop] = source[prop];
+const assign =
+  Object.assign ||
+  function () {
+    let target = arguments[0];
+    for (let i = 1, len = arguments.length; i < len; i++) {
+      let source = arguments[i];
+      if (source) {
+        for (let prop in source) {
+          if (Object.prototype.hasOwnProperty.call(source, prop)) {
+            target[prop] = source[prop];
+          }
         }
       }
     }
-  }
-  return target;
-};
+    return target;
+  };
 const epoch = Date.now();
 const CONSTRUCTOR_CACHE = /* @__PURE__ */ new WeakMap();
 const SHADER_UPGRADE_CACHE = /* @__PURE__ */ new Map();
@@ -42,15 +70,20 @@ function createDerivedMaterial(baseMaterial, options) {
   const optionsKey = getKeyForOptions(options);
   let ctorsByDerivation = CONSTRUCTOR_CACHE.get(baseMaterial);
   if (!ctorsByDerivation) {
-    CONSTRUCTOR_CACHE.set(baseMaterial, ctorsByDerivation = /* @__PURE__ */ Object.create(null));
+    CONSTRUCTOR_CACHE.set(baseMaterial, (ctorsByDerivation = /* @__PURE__ */ Object.create(null)));
   }
   if (ctorsByDerivation[optionsKey]) {
     return new ctorsByDerivation[optionsKey]();
   }
   const privateBeforeCompileProp = `_onBeforeCompile${optionsKey}`;
-  const onBeforeCompile = function(shaderInfo, renderer) {
+  const onBeforeCompile = function (shaderInfo, renderer) {
     baseMaterial.onBeforeCompile.call(this, shaderInfo, renderer);
-    const cacheKey = this.customProgramCacheKey() + "|" + shaderInfo.vertexShader + "|" + shaderInfo.fragmentShader;
+    const cacheKey =
+      this.customProgramCacheKey() +
+      "|" +
+      shaderInfo.vertexShader +
+      "|" +
+      shaderInfo.fragmentShader;
     let upgradedShaders = SHADER_UPGRADE_CACHE[cacheKey];
     if (!upgradedShaders) {
       const upgraded = upgradeShaders(this, shaderInfo, options, optionsKey);
@@ -63,7 +96,7 @@ function createDerivedMaterial(baseMaterial, options) {
       shaderInfo.uniforms[options.timeUniform] = {
         get value() {
           return Date.now() - epoch;
-        }
+        },
       };
     }
     if (this[privateBeforeCompileProp]) {
@@ -73,7 +106,7 @@ function createDerivedMaterial(baseMaterial, options) {
   const DerivedMaterial = function DerivedMaterial2() {
     return derive(options.chained ? baseMaterial : baseMaterial.clone());
   };
-  const derive = function(base) {
+  const derive = function (base) {
     const derived = Object.create(base, descriptor);
     Object.defineProperty(derived, "baseMaterial", { value: baseMaterial });
     Object.defineProperty(derived, "id", { value: materialInstanceId++ });
@@ -92,22 +125,26 @@ function createDerivedMaterial(baseMaterial, options) {
       get: () => baseMaterial.type,
       set: (value) => {
         baseMaterial.type = value;
-      }
+      },
     },
     isDerivedFrom: {
       writable: true,
       configurable: true,
-      value: function(testMaterial) {
+      value: function (testMaterial) {
         const base = this.baseMaterial;
-        return testMaterial === base || base.isDerivedMaterial && base.isDerivedFrom(testMaterial) || false;
-      }
+        return (
+          testMaterial === base ||
+          (base.isDerivedMaterial && base.isDerivedFrom(testMaterial)) ||
+          false
+        );
+      },
     },
     customProgramCacheKey: {
       writable: true,
       configurable: true,
-      value: function() {
+      value: function () {
         return baseMaterial.customProgramCacheKey() + "|" + optionsKey;
-      }
+      },
     },
     onBeforeCompile: {
       get() {
@@ -115,12 +152,12 @@ function createDerivedMaterial(baseMaterial, options) {
       },
       set(fn) {
         this[privateBeforeCompileProp] = fn;
-      }
+      },
     },
     copy: {
       writable: true,
       configurable: true,
-      value: function(source) {
+      value: function (source) {
         baseMaterial.copy.call(this, source);
         if (!baseMaterial.isShaderMaterial && !baseMaterial.isDerivedMaterial) {
           assign(this.extensions, source.extensions);
@@ -128,15 +165,15 @@ function createDerivedMaterial(baseMaterial, options) {
           assign(this.uniforms, UniformsUtils.clone(source.uniforms));
         }
         return this;
-      }
+      },
     },
     clone: {
       writable: true,
       configurable: true,
-      value: function() {
+      value: function () {
         const newBase = new baseMaterial.constructor();
         return derive(newBase).copy(this);
-      }
+      },
     },
     /**
      * Utility to get a MeshDepthMaterial that will honor this derived material's vertex
@@ -145,18 +182,20 @@ function createDerivedMaterial(baseMaterial, options) {
     getDepthMaterial: {
       writable: true,
       configurable: true,
-      value: function() {
+      value: function () {
         let depthMaterial = this._depthMaterial;
         if (!depthMaterial) {
           depthMaterial = this._depthMaterial = createDerivedMaterial(
-            baseMaterial.isDerivedMaterial ? baseMaterial.getDepthMaterial() : new MeshDepthMaterial({ depthPacking: RGBADepthPacking }),
-            options
+            baseMaterial.isDerivedMaterial
+              ? baseMaterial.getDepthMaterial()
+              : new MeshDepthMaterial({ depthPacking: RGBADepthPacking }),
+            options,
           );
           depthMaterial.defines.IS_DEPTH_MATERIAL = "";
           depthMaterial.uniforms = this.uniforms;
         }
         return depthMaterial;
-      }
+      },
     },
     /**
      * Utility to get a MeshDistanceMaterial that will honor this derived material's vertex
@@ -165,18 +204,20 @@ function createDerivedMaterial(baseMaterial, options) {
     getDistanceMaterial: {
       writable: true,
       configurable: true,
-      value: function() {
+      value: function () {
         let distanceMaterial = this._distanceMaterial;
         if (!distanceMaterial) {
           distanceMaterial = this._distanceMaterial = createDerivedMaterial(
-            baseMaterial.isDerivedMaterial ? baseMaterial.getDistanceMaterial() : new MeshDistanceMaterial(),
-            options
+            baseMaterial.isDerivedMaterial
+              ? baseMaterial.getDistanceMaterial()
+              : new MeshDistanceMaterial(),
+            options,
           );
           distanceMaterial.defines.IS_DISTANCE_MATERIAL = "";
           distanceMaterial.uniforms = this.uniforms;
         }
         return distanceMaterial;
-      }
+      },
     },
     dispose: {
       writable: true,
@@ -186,8 +227,8 @@ function createDerivedMaterial(baseMaterial, options) {
         if (_depthMaterial) _depthMaterial.dispose();
         if (_distanceMaterial) _distanceMaterial.dispose();
         baseMaterial.dispose.call(this);
-      }
-    }
+      },
+    },
   };
   ctorsByDerivation[optionsKey] = DerivedMaterial;
   return new DerivedMaterial();
@@ -203,7 +244,7 @@ function upgradeShaders(material, { vertexShader, fragmentShader }, options, key
     fragmentMainOutro,
     fragmentColorTransform,
     customRewriter,
-    timeUniform
+    timeUniform,
   } = options;
   vertexDefs = vertexDefs || "";
   vertexMainIntro = vertexMainIntro || "";
@@ -217,7 +258,7 @@ function upgradeShaders(material, { vertexShader, fragmentShader }, options, key
   if (fragmentColorTransform || customRewriter) {
     fragmentShader = fragmentShader.replace(
       /^[ \t]*#include <((?:tonemapping|encodings|colorspace|fog|premultiplied_alpha|dithering)_fragment)>/gm,
-      "\n//!BEGIN_POST_CHUNK $1\n$&\n//!END_POST_CHUNK\n"
+      "\n//!BEGIN_POST_CHUNK $1\n$&\n//!END_POST_CHUNK\n",
     );
     fragmentShader = expandShaderIncludes(fragmentShader);
   }
@@ -234,7 +275,7 @@ function upgradeShaders(material, { vertexShader, fragmentShader }, options, key
       (match) => {
         postChunks.push(match);
         return "";
-      }
+      },
     );
     fragmentMainOutro = `${fragmentColorTransform}
 ${postChunks.join("\n")}
@@ -265,18 +306,35 @@ troika_uv_${key} = vec2(uv);
 troikaVertexTransform${key}(troika_position_${key}, troika_normal_${key}, troika_uv_${key});
 ${vertexMainIntro}
 `;
-    vertexShader = vertexShader.replace(/\b(position|normal|uv)\b/g, (match, match1, index, fullStr) => {
-      return /\battribute\s+vec[23]\s+$/.test(fullStr.substr(0, index)) ? match1 : `troika_${match1}_${key}`;
-    });
+    vertexShader = vertexShader.replace(
+      /\b(position|normal|uv)\b/g,
+      (match, match1, index, fullStr) => {
+        return /\battribute\s+vec[23]\s+$/.test(fullStr.substr(0, index))
+          ? match1
+          : `troika_${match1}_${key}`;
+      },
+    );
     if (!(material.map && material.map.channel > 0)) {
       vertexShader = vertexShader.replace(/\bMAP_UV\b/g, `troika_uv_${key}`);
     }
   }
-  vertexShader = injectIntoShaderCode(vertexShader, key, vertexDefs, vertexMainIntro, vertexMainOutro);
-  fragmentShader = injectIntoShaderCode(fragmentShader, key, fragmentDefs, fragmentMainIntro, fragmentMainOutro);
+  vertexShader = injectIntoShaderCode(
+    vertexShader,
+    key,
+    vertexDefs,
+    vertexMainIntro,
+    vertexMainOutro,
+  );
+  fragmentShader = injectIntoShaderCode(
+    fragmentShader,
+    key,
+    fragmentDefs,
+    fragmentMainIntro,
+    fragmentMainOutro,
+  );
   return {
     vertexShader,
-    fragmentShader
+    fragmentShader,
   };
 }
 function injectIntoShaderCode(shaderCode, id, defs, intro, outro) {
@@ -285,7 +343,7 @@ function injectIntoShaderCode(shaderCode, id, defs, intro, outro) {
       voidMainRegExp,
       `
 ${defs}
-void troikaOrigMain${id}() {`
+void troikaOrigMain${id}() {`,
     );
     shaderCode += `
 void main() {
@@ -305,11 +363,8 @@ function getKeyForOptions(options) {
   const optionsHash = JSON.stringify(options, optionsJsonReplacer);
   let id = optionsHashesToIds.get(optionsHash);
   if (id == null) {
-    optionsHashesToIds.set(optionsHash, id = ++_idCtr);
+    optionsHashesToIds.set(optionsHash, (id = ++_idCtr));
   }
   return id;
 }
-export {
-  createDerivedMaterial as c,
-  voidMainRegExp as v
-};
+export { createDerivedMaterial as c, voidMainRegExp as v };

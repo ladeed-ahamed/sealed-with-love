@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, ReactNode } from "react";
+import { CornerOrnament } from "./CornerOrnament";
 
 interface DialogueBoxProps {
   speaker?: string;
@@ -9,10 +10,16 @@ interface DialogueBoxProps {
   isTypingEffect?: boolean;
 }
 
-export function DialogueBox({ speaker = "MESSENGER", text, children, onNext, isTypingEffect = true }: DialogueBoxProps) {
+export function DialogueBox({
+  speaker = "MESSENGER",
+  text,
+  children,
+  onNext,
+  isTypingEffect = true,
+}: DialogueBoxProps) {
   const [displayedText, setDisplayedText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const timerRef = useRef<any>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Typewriter effect
   useEffect(() => {
@@ -69,59 +76,87 @@ export function DialogueBox({ speaker = "MESSENGER", text, children, onNext, isT
     }
   };
 
+  const isArabic = speaker === "MESSENGER" || (text && /[\u0600-\u06FF]/.test(text));
+
   return (
-    <div className="relative w-full max-w-2xl mx-auto cursor-pointer select-none" onClick={handleClick}>
-      {/* Name Tag */}
+    <div
+      className="relative w-full max-w-2xl mx-auto cursor-pointer select-none"
+      onClick={handleClick}
+    >
+      {/* Name Tag / Speaker Header */}
       {speaker && (
-        <div className="absolute -top-4 left-4 z-10">
-          <div className="name-tag text-xl md:text-2xl shadow-[4px_4px_0px_var(--ink)]">
+        <div className="absolute -top-3 left-6 z-10">
+          <span className="font-display bg-white/95 backdrop-blur px-5 py-1 text-xs md:text-sm tracking-[0.2em] font-semibold text-gold border border-gold/30 rounded-full shadow-[0_4px_12px_rgba(42,36,33,0.04)] uppercase">
             {speaker}
-          </div>
+          </span>
         </div>
       )}
 
       {/* Main Dialogue Box */}
-      <div 
-        className="drawn-card p-6 md:p-8 min-h-[120px] md:min-h-[150px] flex flex-col justify-center"
-      >
+      <div className="drawn-card p-8 md:p-12 min-h-[140px] md:min-h-[170px] flex flex-col justify-center relative overflow-hidden">
+        {/* Decorative gold corners */}
+        <CornerOrnament className="absolute top-2.5 left-2.5 w-8 h-8 text-gold/25" />
+        <CornerOrnament className="absolute top-2.5 right-2.5 w-8 h-8 text-gold/25" flipX />
+        <CornerOrnament className="absolute bottom-2.5 left-2.5 w-8 h-8 text-gold/25" flipY />
+        <CornerOrnament
+          className="absolute bottom-2.5 right-2.5 w-8 h-8 text-gold/25"
+          flipX
+          flipY
+        />
+
         {text && (
-          <p className="text-2xl md:text-3xl leading-relaxed whitespace-pre-line">
+          <p
+            className={`${
+              isArabic
+                ? "font-arabic text-2xl md:text-3xl text-gold text-center py-2 leading-loose"
+                : "font-display text-lg md:text-xl text-ink/90 text-center px-2 md:px-6 italic leading-relaxed"
+            } whitespace-pre-line`}
+          >
             {displayedText}
           </p>
         )}
 
         {/* Custom Content (Countdown, Maps, Gallery) fading in after typing finishes */}
         {children && !isTyping && (
-          <motion.div 
+          <motion.div
             className="mt-6 w-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
             {children}
           </motion.div>
         )}
 
-        {/* Next Button / Blinking Cursor indicator */}
+        {/* Next Button indicator */}
         <AnimatePresence>
           {!isTyping && onNext && (
-            <motion.div 
-              className="absolute -bottom-4 -right-4 z-10"
+            <motion.div
+              className="absolute -bottom-4 right-6 z-10"
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0, opacity: 0 }}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <button 
-                className="play-btn w-12 h-12 md:w-16 md:h-16 flex items-center justify-center bg-white"
+              <button
+                className="play-btn w-11 h-11 md:w-13 md:h-13 flex items-center justify-center bg-white border border-gold/40 text-gold shadow-md hover:bg-gold/5 cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
                   onNext();
                 }}
               >
-                {/* Hand-drawn triangle play icon */}
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 4L20 12L6 20V4Z" fill="var(--blue-accent)" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round"/>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </button>
             </motion.div>

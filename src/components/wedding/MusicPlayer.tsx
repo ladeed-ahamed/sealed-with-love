@@ -22,7 +22,7 @@ export function MusicPlayer() {
         setAutoplayBlocked(false);
         // Remove listeners once successfully started
         ["click", "touchstart", "scroll"].forEach((evt) =>
-          document.removeEventListener(evt, startAudio)
+          document.removeEventListener(evt, startAudio),
         );
       } catch (err) {
         // Still blocked, wait for next interaction
@@ -30,16 +30,17 @@ export function MusicPlayer() {
     };
 
     // Try to play immediately (works on desktop sometimes)
-    audio.play()
+    audio
+      .play()
       .then(() => {
         setPlaying(true);
       })
       .catch(() => {
-        // Blocked by browser policy. 
+        // Blocked by browser policy.
         // We will start it the moment the user taps the envelope.
         setAutoplayBlocked(true);
         ["click", "touchstart", "scroll"].forEach((evt) =>
-          document.addEventListener(evt, startAudio, { once: false })
+          document.addEventListener(evt, startAudio, { once: false }),
         );
       });
 
@@ -47,7 +48,7 @@ export function MusicPlayer() {
       audio.pause();
       audio.src = "";
       ["click", "touchstart", "scroll"].forEach((evt) =>
-        document.removeEventListener(evt, startAudio)
+        document.removeEventListener(evt, startAudio),
       );
     };
   }, []);
@@ -59,7 +60,10 @@ export function MusicPlayer() {
       audio.pause();
       setPlaying(false);
     } else {
-      audio.play().then(() => setPlaying(true)).catch(() => {});
+      audio
+        .play()
+        .then(() => setPlaying(true))
+        .catch(() => {});
     }
   };
 
@@ -73,7 +77,7 @@ export function MusicPlayer() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.4 }}
-            className="drawn-card px-4 py-2 font-pixel text-lg text-ink shadow-[2px_2px_0px_var(--ink)]"
+            className="bg-white border border-gold/20 text-foreground text-[10px] tracking-[0.2em] uppercase font-display font-semibold px-4 py-2.5 rounded-full shadow-[0_4px_12px_rgba(42,36,33,0.06)]"
           >
             TAP TO PLAY AUDIO
           </motion.div>
@@ -87,17 +91,35 @@ export function MusicPlayer() {
         onClick={toggle}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="play-btn flex h-14 w-14 items-center justify-center rounded-sm"
-        style={{ cursor: "pointer" }}
+        animate={playing ? { rotate: 360 } : { rotate: 0 }}
+        transition={playing ? { repeat: Infinity, duration: 6, ease: "linear" } : { duration: 0.5 }}
+        className="play-btn flex h-12 w-12 items-center justify-center bg-white border border-gold/50 text-gold shadow-md cursor-pointer rounded-full"
       >
-        {/* Simple drawn icon */}
         {playing ? (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <rect x="6" y="4" width="4" height="16"></rect>
             <rect x="14" y="4" width="4" height="16"></rect>
           </svg>
         ) : (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="3" strokeLinejoin="round">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinejoin="round"
+            className="ml-0.5"
+          >
             <path d="M5 3L19 12L5 21V3Z"></path>
           </svg>
         )}

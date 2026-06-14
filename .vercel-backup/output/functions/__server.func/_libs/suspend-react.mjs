@@ -31,15 +31,16 @@ function query(fn, keys = null, preload2 = false, config = {}) {
       const index = globalCache.indexOf(entry);
       if (index !== -1) globalCache.splice(index, 1);
     },
-    promise: (
+    promise:
       // Execute the promise
-      (isPromise(fn) ? fn : fn(...keys)).then((response) => {
-        entry.response = response;
-        if (config.lifespan && config.lifespan > 0) {
-          entry.timeout = setTimeout(entry.remove, config.lifespan);
-        }
-      }).catch((error) => entry.error = error)
-    )
+      (isPromise(fn) ? fn : fn(...keys))
+        .then((response) => {
+          entry.response = response;
+          if (config.lifespan && config.lifespan > 0) {
+            entry.timeout = setTimeout(entry.remove, config.lifespan);
+          }
+        })
+        .catch((error) => (entry.error = error)),
   };
   globalCache.push(entry);
   if (!preload2) throw entry.promise;
@@ -54,8 +55,4 @@ const clear = (keys) => {
     if (entry) entry.remove();
   }
 };
-export {
-  clear as c,
-  preload as p,
-  suspend as s
-};
+export { clear as c, preload as p, suspend as s };

@@ -22,26 +22,36 @@ export function DrawnEnvelope({ onClick }: { onClick?: () => void }) {
   });
 
   return (
-    <group 
-      ref={groupRef} 
+    <group
+      ref={groupRef}
       onClick={onClick}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
       scale={activeScale}
       // Add cursor pointer style when hovering
-      onPointerEnter={() => { document.body.style.cursor = 'pointer'; setHovered(true); }}
-      onPointerLeave={() => { document.body.style.cursor = 'auto'; setHovered(false); }}
+      onPointerEnter={() => {
+        document.body.style.cursor = "pointer";
+        setHovered(true);
+      }}
+      onPointerLeave={() => {
+        document.body.style.cursor = "auto";
+        setHovered(false);
+      }}
     >
       {/* Hand-drawn style Envelope Background */}
       <mesh position={[0, 0, 0]}>
         <planeGeometry args={[3, 2]} />
         <meshBasicMaterial color="#ffffff" side={THREE.DoubleSide} />
       </mesh>
-      
+
       {/* Thick Outline for Back */}
       <Line
         points={[
-          [-1.5, 1, 0], [1.5, 1, 0], [1.5, -1, 0], [-1.5, -1, 0], [-1.5, 1, 0]
+          [-1.5, 1, 0],
+          [1.5, 1, 0],
+          [1.5, -1, 0],
+          [-1.5, -1, 0],
+          [-1.5, 1, 0],
         ]}
         color="#1a1a1a"
         lineWidth={5}
@@ -54,7 +64,11 @@ export function DrawnEnvelope({ onClick }: { onClick?: () => void }) {
       </mesh>
       <Line
         points={[
-          [0.7, 0.85, 0.016], [1.2, 0.85, 0.016], [1.2, 0.25, 0.016], [0.7, 0.25, 0.016], [0.7, 0.85, 0.016]
+          [0.7, 0.85, 0.016],
+          [1.2, 0.85, 0.016],
+          [1.2, 0.25, 0.016],
+          [0.7, 0.25, 0.016],
+          [0.7, 0.85, 0.016],
         ]}
         color="#1a1a1a"
         lineWidth={3}
@@ -72,7 +86,11 @@ export function DrawnEnvelope({ onClick }: { onClick?: () => void }) {
       {/* Wavy Postmark Cancellation Lines */}
       <Line
         points={[
-          [0.4, 0.7, 0.018], [0.65, 0.65, 0.018], [0.9, 0.7, 0.018], [1.15, 0.65, 0.018], [1.4, 0.7, 0.018]
+          [0.4, 0.7, 0.018],
+          [0.65, 0.65, 0.018],
+          [0.9, 0.7, 0.018],
+          [1.15, 0.65, 0.018],
+          [1.4, 0.7, 0.018],
         ]}
         color="#1a1a1a"
         lineWidth={2}
@@ -81,18 +99,24 @@ export function DrawnEnvelope({ onClick }: { onClick?: () => void }) {
       />
       <Line
         points={[
-          [0.4, 0.5, 0.018], [0.65, 0.45, 0.018], [0.9, 0.5, 0.018], [1.15, 0.45, 0.018], [1.4, 0.5, 0.018]
+          [0.4, 0.5, 0.018],
+          [0.65, 0.45, 0.018],
+          [0.9, 0.5, 0.018],
+          [1.15, 0.45, 0.018],
+          [1.4, 0.5, 0.018],
         ]}
         color="#1a1a1a"
         lineWidth={2}
         opacity={0.4}
         transparent
       />
-      
+
       {/* Flap Outline */}
       <Line
         points={[
-          [-1.5, 1, 0.01], [0, 0, 0.01], [1.5, 1, 0.01]
+          [-1.5, 1, 0.01],
+          [0, 0, 0.01],
+          [1.5, 1, 0.01],
         ]}
         color="#1a1a1a"
         lineWidth={5}
@@ -101,7 +125,9 @@ export function DrawnEnvelope({ onClick }: { onClick?: () => void }) {
       {/* Cross lines to look like an envelope */}
       <Line
         points={[
-          [-1.5, -1, 0.01], [0, 0, 0.01], [1.5, -1, 0.01]
+          [-1.5, -1, 0.01],
+          [0, 0, 0.01],
+          [1.5, -1, 0.01],
         ]}
         color="#1a1a1a"
         lineWidth={5}

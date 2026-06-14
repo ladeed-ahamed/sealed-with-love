@@ -4,57 +4,66 @@ import { wedding } from "@/lib/wedding-data";
 export function RetroEventCard() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.5, type: "spring" }}
-      className="drawn-card w-full max-w-lg bg-white p-4 md:p-8 flex flex-col items-center text-center select-none shadow-[6px_6px_0px_var(--ink)] pointer-events-auto"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="drawn-card w-full max-w-lg bg-white/95 p-6 md:p-10 flex flex-col items-center text-center select-none pointer-events-auto"
     >
-      <div className="name-tag mb-4 md:mb-6 text-lg md:text-xl bg-blue-accent shadow-[2px_2px_0px_var(--ink)]">
-        CEREMONY DETAILS
+      <div className="name-tag mb-4 text-xs tracking-[0.2em] bg-gradient-to-r from-gold to-gold/85 shadow-sm uppercase font-semibold">
+        Reception Details
       </div>
 
-      <h3 className="font-pixel text-2xl md:text-4xl text-ink mb-1 md:mb-2 uppercase leading-none">
+      <h3 className="font-display text-2xl md:text-3xl text-foreground font-semibold mb-1 tracking-wide">
         {wedding.event.culturalName}
       </h3>
-      
-      <div className="w-20 md:w-24 h-1 border-t-4 border-ink border-dashed my-2 md:my-4"></div>
 
-      <div className="flex flex-col gap-3 md:gap-6 w-full font-dialogue text-ink">
+      {/* Decorative Separator */}
+      <div className="flex items-center gap-3 my-4 justify-center text-gold/60">
+        <span className="w-12 h-px bg-gold/30"></span>
+        <span className="text-sm">❦</span>
+        <span className="w-12 h-px bg-gold/30"></span>
+      </div>
+
+      <div className="flex flex-col gap-5 md:gap-7 w-full text-foreground">
         {/* Date Section */}
         <div>
-          <span className="font-pixel text-base md:text-lg text-blue-accent uppercase block tracking-wider">DATE</span>
-          <p className="text-xl md:text-2xl font-bold">{wedding.event.date}</p>
+          <span className="font-display text-xs tracking-[0.25em] text-gold uppercase font-bold block mb-1">
+            DATE
+          </span>
+          <p className="font-display text-lg md:text-xl font-medium">{wedding.event.date}</p>
           {wedding.event.secondaryDate && (
-            <p className="text-xs md:text-sm italic opacity-75">{wedding.event.secondaryDate}</p>
+            <p className="font-body text-xs text-foreground/60 italic mt-0.5">
+              {wedding.event.secondaryDate}
+            </p>
           )}
         </div>
 
         {/* Time Section */}
         <div>
-          <span className="font-pixel text-base md:text-lg text-blue-accent uppercase block tracking-wider">TIME</span>
-          <p className="text-xl md:text-2xl font-bold">{wedding.event.time}</p>
+          <span className="font-display text-xs tracking-[0.25em] text-gold uppercase font-bold block mb-1">
+            TIME
+          </span>
+          <p className="font-display text-lg md:text-xl font-medium">{wedding.event.time}</p>
         </div>
 
         {/* Venue Section */}
         <div>
-          <span className="font-pixel text-base md:text-lg text-blue-accent uppercase block tracking-wider">VENUE</span>
-          <p className="text-xl md:text-2xl font-bold">{wedding.event.venue}</p>
-          <p className="text-sm md:text-md opacity-80 mt-0.5 md:mt-1 max-w-sm mx-auto leading-relaxed">{wedding.event.address}</p>
+          <span className="font-display text-xs tracking-[0.25em] text-gold uppercase font-bold block mb-1">
+            VENUE
+          </span>
+          <p className="font-display text-lg md:text-xl font-medium">{wedding.event.venue}</p>
+          <p className="font-body text-xs md:text-sm text-foreground/75 mt-1.5 max-w-xs mx-auto leading-relaxed">
+            {wedding.event.address}
+          </p>
         </div>
       </div>
 
       {/* Map Action Button */}
-      <a 
-        href={wedding.event.maps} 
-        target="_blank" 
-        rel="noreferrer" 
-        className="mt-4 md:mt-6 inline-block"
-      >
-        <button className="name-tag hover:scale-105 active:scale-95 transition-transform text-xl md:text-2xl cursor-pointer">
+      <a href={wedding.event.maps} target="_blank" rel="noreferrer" className="mt-6 md:mt-8">
+        <button className="name-tag hover:scale-105 active:scale-95 transition-transform text-xs tracking-[0.2em] bg-gradient-to-r from-gold to-gold/85 shadow-md py-2.5 px-8 cursor-pointer font-semibold uppercase">
           VIEW ON MAP
         </button>
       </a>
-
     </motion.div>
   );
 }

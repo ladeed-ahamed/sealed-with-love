@@ -7,7 +7,9 @@ const createStoreImpl = (createState) => {
     const nextState = typeof partial === "function" ? partial(state) : partial;
     if (!Object.is(nextState, state)) {
       const previousState = state;
-      state = (replace != null ? replace : typeof nextState !== "object" || nextState === null) ? nextState : Object.assign({}, state, nextState);
+      state = (replace != null ? replace : typeof nextState !== "object" || nextState === null)
+        ? nextState
+        : Object.assign({}, state, nextState);
       listeners.forEach((listener) => listener(state, previousState));
     }
   };
@@ -18,10 +20,10 @@ const createStoreImpl = (createState) => {
     return () => listeners.delete(listener);
   };
   const api = { setState, getState, getInitialState, subscribe };
-  const initialState = state = createState(setState, getState, api);
+  const initialState = (state = createState(setState, getState, api));
   return api;
 };
-const createStore = ((createState) => createState ? createStoreImpl(createState) : createStoreImpl);
+const createStore = (createState) => (createState ? createStoreImpl(createState) : createStoreImpl);
 const { useSyncExternalStoreWithSelector } = useSyncExternalStoreExports;
 const identity = (arg) => arg;
 function useStoreWithEqualityFn(api, selector = identity, equalityFn) {
@@ -30,18 +32,18 @@ function useStoreWithEqualityFn(api, selector = identity, equalityFn) {
     api.getState,
     api.getInitialState,
     selector,
-    equalityFn
+    equalityFn,
   );
   React.useDebugValue(slice);
   return slice;
 }
 const createWithEqualityFnImpl = (createState, defaultEqualityFn) => {
   const api = createStore(createState);
-  const useBoundStoreWithEqualityFn = (selector, equalityFn = defaultEqualityFn) => useStoreWithEqualityFn(api, selector, equalityFn);
+  const useBoundStoreWithEqualityFn = (selector, equalityFn = defaultEqualityFn) =>
+    useStoreWithEqualityFn(api, selector, equalityFn);
   Object.assign(useBoundStoreWithEqualityFn, api);
   return useBoundStoreWithEqualityFn;
 };
-const createWithEqualityFn = ((createState, defaultEqualityFn) => createState ? createWithEqualityFnImpl(createState, defaultEqualityFn) : createWithEqualityFnImpl);
-export {
-  createWithEqualityFn as c
-};
+const createWithEqualityFn = (createState, defaultEqualityFn) =>
+  createState ? createWithEqualityFnImpl(createState, defaultEqualityFn) : createWithEqualityFnImpl;
+export { createWithEqualityFn as c };

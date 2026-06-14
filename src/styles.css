@@ -2,71 +2,138 @@
 @import "tw-animate-css";
 @source "../src";
 
-@custom-variant dark (&:is(.dark *));
+@theme {
+  --variant-dark: &: is(.dark *);
 
-@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
-  --font-dialogue: "Patrick Hand", cursive;
-  --font-pixel: "VT323", monospace;
+  --color-rosegold: var(--rosegold);
+  --color-rosegold-soft: var(--rosegold-soft);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-ink: var(--ink);
+  --color-white: var(--white);
+
+  --font-display: var(--font-display);
+  --font-script: var(--font-script);
+  --font-body: var(--font-body);
+  --font-arabic: var(--font-arabic);
 }
 
 :root {
-  /* Visual Novel / Drawn Palette */
-  --background: oklch(0.92 0.05 200); /* Very light teal/cyan background */
-  --foreground: oklch(0.1 0 0); /* Dark ink */
-  
-  --ink: oklch(0.1 0 0);
-  --white: oklch(0.99 0 0);
-  --blue-accent: oklch(0.70 0.12 240); /* Light blue for UI accents */
+  /* Premium Romantic Wedding Palette */
+  --background: oklch(0.98 0.01 65);
+  /* Warm Ivory/Champagne */
+  --foreground: oklch(0.24 0.02 35);
+  /* Deep ink charcoal-burgundy */
+
+  --rosegold: oklch(0.68 0.1 5);
+  /* Metallic Rose Gold */
+  --rosegold-soft: oklch(0.86 0.05 5);
+  /* Soft rose gold accent */
+  --gold: oklch(0.76 0.14 85);
+  /* Warm gold accent */
+  --gold-light: oklch(0.93 0.07 88);
+  /* Soft gold shade */
+  --ink: oklch(0.32 0.05 10);
+  /* Deep elegant rose-burgundy ink */
+  --white: oklch(1 0 0);
+  /* Pure soft white */
+
+  /* Modern Elegant Typography */
+  --font-display: "Playfair Display", serif;
+  --font-script: "Great Vibes", cursive;
+  --font-body: "Montserrat", sans-serif;
+  --font-arabic: "Amiri", serif;
 }
 
 @layer base {
   body {
     background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-dialogue);
-    letter-spacing: 0.05em;
-    /* Sketchy background pattern */
-    background-image: radial-gradient(var(--ink) 1px, transparent 1px);
-    background-size: 30px 30px;
-    background-position: -15px -15px;
-    opacity: 0.95;
+    color: var(--rosegold);
+    font-family: var(--font-body);
+    letter-spacing: 0.03em;
+    /* Luxurious background gradient */
+    background-image:
+      radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.02) 0%, transparent 80%),
+      radial-gradient(circle at 10% 20%, rgba(183, 110, 121, 0.03) 0%, transparent 60%);
+    background-attachment: fixed;
+    opacity: 0.98;
   }
 }
 
-@utility font-dialogue { font-family: var(--font-dialogue); }
-@utility font-pixel { font-family: var(--font-pixel); }
+@utility font-dialogue {
+  font-family: var(--font-body);
+}
+
+@utility font-pixel {
+  font-family: var(--font-display);
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@utility font-script {
+  font-family: var(--font-script);
+}
+
+@utility font-body {
+  font-family: var(--font-body);
+}
+
+@utility font-arabic {
+  font-family: var(--font-arabic);
+}
+
+@utility font-label {
+  font-family: var(--font-body);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
 
 @utility drawn-card {
-  background-color: var(--white);
-  border: 4px solid var(--ink);
-  /* Irregular sketchy border radius */
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  box-shadow: 6px 6px 0px var(--ink);
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 16px;
+  box-shadow:
+    0 10px 40px -15px rgba(42, 36, 33, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
   position: relative;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @utility name-tag {
-  background-color: var(--blue-accent);
-  border: 4px solid var(--ink);
-  font-family: var(--font-pixel);
+  background: linear-gradient(135deg, var(--gold) 0%, oklch(0.7 0.12 85) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: var(--font-display);
   text-transform: uppercase;
   color: var(--white);
-  padding: 4px 16px;
-  /* Slight irregular rotation */
-  transform: rotate(-2deg);
+  padding: 6px 20px;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
+  border-radius: 20px;
+  display: inline-block;
 }
 
 @utility play-btn {
   background-color: var(--white);
-  border: 4px solid var(--ink);
-  box-shadow: 4px 4px 0px var(--ink);
-  transition: all 0.1s ease;
-  &:active {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0px var(--ink);
-  }
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 4px 14px rgba(42, 36, 33, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
 }
 
+.play-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.12);
+  border-color: var(--gold);
+}
+
+.play-btn:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 8px rgba(42, 36, 33, 0.08);
+}

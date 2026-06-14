@@ -1,4 +1,34 @@
-import { a5 as ClampToEdgeWrapping, r as LinearFilter, S as Scene, O as OrthographicCamera, H as HalfFloatType, F as FloatType, M as Mesh, a4 as PlaneGeometry, a6 as WebGLRenderTarget, f as RGBAFormat, a7 as UVMapping, W as WebGLRenderer, a8 as DataTexture, L as LinearSRGBColorSpace, e as ShaderMaterial, a2 as Texture, a0 as MeshBasicMaterial, a9 as IntType, aa as ShortType, ab as ByteType, ac as UnsignedIntType, U as UnsignedByteType, ad as Loader, ae as LoadingManager, af as LinearMipMapLinearFilter, c as SRGBColorSpace, ag as FileLoader, ah as NoBlending, h as Vector3 } from "./three.mjs";
+import {
+  a5 as ClampToEdgeWrapping,
+  r as LinearFilter,
+  S as Scene,
+  O as OrthographicCamera,
+  H as HalfFloatType,
+  F as FloatType,
+  M as Mesh,
+  a4 as PlaneGeometry,
+  a6 as WebGLRenderTarget,
+  f as RGBAFormat,
+  a7 as UVMapping,
+  W as WebGLRenderer,
+  a8 as DataTexture,
+  L as LinearSRGBColorSpace,
+  e as ShaderMaterial,
+  a2 as Texture,
+  a0 as MeshBasicMaterial,
+  a9 as IntType,
+  aa as ShortType,
+  ab as ByteType,
+  ac as UnsignedIntType,
+  U as UnsignedByteType,
+  ad as Loader,
+  ae as LoadingManager,
+  af as LinearMipMapLinearFilter,
+  c as SRGBColorSpace,
+  ag as FileLoader,
+  ah as NoBlending,
+  h as Vector3,
+} from "./three.mjs";
 const getBufferForType = (type, width, height) => {
   let out;
   switch (type) {
@@ -30,8 +60,7 @@ const getBufferForType = (type, width, height) => {
 };
 let _canReadPixelsResult;
 const canReadPixels = (type, renderer, camera, renderTargetOptions) => {
-  if (_canReadPixelsResult !== void 0)
-    return _canReadPixelsResult;
+  if (_canReadPixelsResult !== void 0) return _canReadPixelsResult;
   const testRT = new WebGLRenderTarget(1, 1, renderTargetOptions);
   renderer.setRenderTarget(testRT);
   const mesh = new Mesh(new PlaneGeometry(), new MeshBasicMaterial({ color: 16777215 }));
@@ -78,13 +107,34 @@ class QuadRenderer {
       // set in class property
       colorSpace: this._colorSpace,
       // set in class property
-      anisotropy: options.renderTargetOptions?.anisotropy !== void 0 ? options.renderTargetOptions?.anisotropy : 1,
-      generateMipmaps: options.renderTargetOptions?.generateMipmaps !== void 0 ? options.renderTargetOptions?.generateMipmaps : false,
-      magFilter: options.renderTargetOptions?.magFilter !== void 0 ? options.renderTargetOptions?.magFilter : LinearFilter,
-      minFilter: options.renderTargetOptions?.minFilter !== void 0 ? options.renderTargetOptions?.minFilter : LinearFilter,
-      samples: options.renderTargetOptions?.samples !== void 0 ? options.renderTargetOptions?.samples : void 0,
-      wrapS: options.renderTargetOptions?.wrapS !== void 0 ? options.renderTargetOptions?.wrapS : ClampToEdgeWrapping,
-      wrapT: options.renderTargetOptions?.wrapT !== void 0 ? options.renderTargetOptions?.wrapT : ClampToEdgeWrapping
+      anisotropy:
+        options.renderTargetOptions?.anisotropy !== void 0
+          ? options.renderTargetOptions?.anisotropy
+          : 1,
+      generateMipmaps:
+        options.renderTargetOptions?.generateMipmaps !== void 0
+          ? options.renderTargetOptions?.generateMipmaps
+          : false,
+      magFilter:
+        options.renderTargetOptions?.magFilter !== void 0
+          ? options.renderTargetOptions?.magFilter
+          : LinearFilter,
+      minFilter:
+        options.renderTargetOptions?.minFilter !== void 0
+          ? options.renderTargetOptions?.minFilter
+          : LinearFilter,
+      samples:
+        options.renderTargetOptions?.samples !== void 0
+          ? options.renderTargetOptions?.samples
+          : void 0,
+      wrapS:
+        options.renderTargetOptions?.wrapS !== void 0
+          ? options.renderTargetOptions?.wrapS
+          : ClampToEdgeWrapping,
+      wrapT:
+        options.renderTargetOptions?.wrapT !== void 0
+          ? options.renderTargetOptions?.wrapT
+          : ClampToEdgeWrapping,
     };
     this._material = options.material;
     if (options.renderer) {
@@ -105,22 +155,31 @@ class QuadRenderer {
       let alternativeType;
       switch (this._type) {
         case HalfFloatType:
-          alternativeType = this._renderer.extensions.has("EXT_color_buffer_float") ? FloatType : void 0;
+          alternativeType = this._renderer.extensions.has("EXT_color_buffer_float")
+            ? FloatType
+            : void 0;
           break;
       }
       if (alternativeType !== void 0) {
-        console.warn(`This browser does not support reading pixels from ${this._type} RenderTargets, switching to ${FloatType}`);
+        console.warn(
+          `This browser does not support reading pixels from ${this._type} RenderTargets, switching to ${FloatType}`,
+        );
         this._type = alternativeType;
       } else {
         this._supportsReadPixels = false;
-        console.warn("This browser dos not support toArray or toDataTexture, calls to those methods will result in an error thrown");
+        console.warn(
+          "This browser dos not support toArray or toDataTexture, calls to those methods will result in an error thrown",
+        );
       }
     }
     this._quad = new Mesh(new PlaneGeometry(), this._material);
     this._quad.geometry.computeBoundingBox();
     this._scene.add(this._quad);
     this._renderTarget = new WebGLRenderTarget(this.width, this.height, rtOptions);
-    this._renderTarget.texture.mapping = options.renderTargetOptions?.mapping !== void 0 ? options.renderTargetOptions?.mapping : UVMapping;
+    this._renderTarget.texture.mapping =
+      options.renderTargetOptions?.mapping !== void 0
+        ? options.renderTargetOptions?.mapping
+        : UVMapping;
   }
   /**
    * Instantiates a temporary renderer
@@ -152,8 +211,7 @@ class QuadRenderer {
    * @returns a TypedArray containing RGBA values from this renderer
    */
   toArray() {
-    if (!this._supportsReadPixels)
-      throw new Error("Can't read pixels in this browser");
+    if (!this._supportsReadPixels) throw new Error("Can't read pixels in this browser");
     const out = getBufferForType(this._type, this._width, this._height);
     this._renderer.readRenderTargetPixels(this._renderTarget, 0, 0, this._width, this._height, out);
     return out;
@@ -181,9 +239,10 @@ class QuadRenderer {
       options?.minFilter || LinearFilter,
       options?.anisotropy || 1,
       // fixed value
-      LinearSRGBColorSpace
+      LinearSRGBColorSpace,
     );
-    returnValue.generateMipmaps = options?.generateMipmaps !== void 0 ? options?.generateMipmaps : false;
+    returnValue.generateMipmaps =
+      options?.generateMipmaps !== void 0 ? options?.generateMipmaps : false;
     return returnValue;
   }
   /**
@@ -233,13 +292,11 @@ class QuadRenderer {
     }
     if (this.material instanceof ShaderMaterial) {
       Object.values(this.material.uniforms).forEach((v) => {
-        if (v.value instanceof Texture)
-          v.value.dispose();
+        if (v.value instanceof Texture) v.value.dispose();
       });
     }
     Object.values(this.material).forEach((value) => {
-      if (value instanceof Texture)
-        value.dispose();
+      if (value instanceof Texture) value.dispose();
     });
     this.material.dispose();
     this._quad.geometry.dispose();
@@ -297,14 +354,11 @@ class QuadRenderer {
     return this._colorSpace;
   }
 }
-class GainMapNotFoundError extends Error {
-}
-class XMPMetadataNotFoundError extends Error {
-}
+class GainMapNotFoundError extends Error {}
+class XMPMetadataNotFoundError extends Error {}
 const getXMLValue = (xml, tag, defaultValue) => {
   const attributeMatch = new RegExp(`${tag}="([^"]*)"`, "i").exec(xml);
-  if (attributeMatch)
-    return attributeMatch[1];
+  if (attributeMatch) return attributeMatch[1];
   const tagMatch = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, "i").exec(xml);
   if (tagMatch) {
     const liValues = tagMatch[1].match(/<rdf:li>([^<]*)<\/rdf:li>/g);
@@ -313,16 +367,13 @@ const getXMLValue = (xml, tag, defaultValue) => {
     }
     return tagMatch[1].trim();
   }
-  if (defaultValue !== void 0)
-    return defaultValue;
+  if (defaultValue !== void 0) return defaultValue;
   throw new Error(`Can't find ${tag} in gainmap metadata`);
 };
 const extractXMP = (input) => {
   let str;
-  if (typeof TextDecoder !== "undefined")
-    str = new TextDecoder().decode(input);
-  else
-    str = input.toString();
+  if (typeof TextDecoder !== "undefined") str = new TextDecoder().decode(input);
+  else str = input.toString();
   let start = str.indexOf("<x:xmpmeta");
   while (start !== -1) {
     const end = str.indexOf("x:xmpmeta>", start);
@@ -336,20 +387,28 @@ const extractXMP = (input) => {
       const hdrCapacityMinMatch = /hdrgm:HDRCapacityMin="([^"]*)"/.exec(xmpBlock);
       const hdrCapacityMin = hdrCapacityMinMatch ? hdrCapacityMinMatch[1] : "0";
       const hdrCapacityMaxMatch = /hdrgm:HDRCapacityMax="([^"]*)"/.exec(xmpBlock);
-      if (!hdrCapacityMaxMatch)
-        throw new Error("Incomplete gainmap metadata");
+      if (!hdrCapacityMaxMatch) throw new Error("Incomplete gainmap metadata");
       const hdrCapacityMax = hdrCapacityMaxMatch[1];
       return {
-        gainMapMin: Array.isArray(gainMapMin) ? gainMapMin.map((v) => parseFloat(v)) : [parseFloat(gainMapMin), parseFloat(gainMapMin), parseFloat(gainMapMin)],
-        gainMapMax: Array.isArray(gainMapMax) ? gainMapMax.map((v) => parseFloat(v)) : [parseFloat(gainMapMax), parseFloat(gainMapMax), parseFloat(gainMapMax)],
-        gamma: Array.isArray(gamma) ? gamma.map((v) => parseFloat(v)) : [parseFloat(gamma), parseFloat(gamma), parseFloat(gamma)],
-        offsetSdr: Array.isArray(offsetSDR) ? offsetSDR.map((v) => parseFloat(v)) : [parseFloat(offsetSDR), parseFloat(offsetSDR), parseFloat(offsetSDR)],
-        offsetHdr: Array.isArray(offsetHDR) ? offsetHDR.map((v) => parseFloat(v)) : [parseFloat(offsetHDR), parseFloat(offsetHDR), parseFloat(offsetHDR)],
+        gainMapMin: Array.isArray(gainMapMin)
+          ? gainMapMin.map((v) => parseFloat(v))
+          : [parseFloat(gainMapMin), parseFloat(gainMapMin), parseFloat(gainMapMin)],
+        gainMapMax: Array.isArray(gainMapMax)
+          ? gainMapMax.map((v) => parseFloat(v))
+          : [parseFloat(gainMapMax), parseFloat(gainMapMax), parseFloat(gainMapMax)],
+        gamma: Array.isArray(gamma)
+          ? gamma.map((v) => parseFloat(v))
+          : [parseFloat(gamma), parseFloat(gamma), parseFloat(gamma)],
+        offsetSdr: Array.isArray(offsetSDR)
+          ? offsetSDR.map((v) => parseFloat(v))
+          : [parseFloat(offsetSDR), parseFloat(offsetSDR), parseFloat(offsetSDR)],
+        offsetHdr: Array.isArray(offsetHDR)
+          ? offsetHDR.map((v) => parseFloat(v))
+          : [parseFloat(offsetHDR), parseFloat(offsetHDR), parseFloat(offsetHDR)],
         hdrCapacityMin: parseFloat(hdrCapacityMin),
-        hdrCapacityMax: parseFloat(hdrCapacityMax)
+        hdrCapacityMax: parseFloat(hdrCapacityMax),
       };
-    } catch (e) {
-    }
+    } catch (e) {}
     start = str.indexOf("<x:xmpmeta", end);
   }
 };
@@ -359,7 +418,7 @@ class MPFExtractor {
     this.options = {
       debug: options && options.debug !== void 0 ? options.debug : false,
       extractFII: options && options.extractFII !== void 0 ? options.extractFII : true,
-      extractNonFII: options && options.extractNonFII !== void 0 ? options.extractNonFII : true
+      extractNonFII: options && options.extractNonFII !== void 0 ? options.extractNonFII : true,
     };
   }
   extract(imageArrayBuffer) {
@@ -380,15 +439,17 @@ class MPFExtractor {
           return;
         }
         if (dataView.getUint8(offset) !== 255) {
-          reject(new Error(`Not a valid marker at offset 0x${offset.toString(16)}, found: 0x${dataView.getUint8(offset).toString(16)}`));
+          reject(
+            new Error(
+              `Not a valid marker at offset 0x${offset.toString(16)}, found: 0x${dataView.getUint8(offset).toString(16)}`,
+            ),
+          );
           return;
         }
         marker = dataView.getUint8(offset + 1);
-        if (debug)
-          console.log(`Marker: ${marker.toString(16)}`);
+        if (debug) console.log(`Marker: ${marker.toString(16)}`);
         if (marker === 226) {
-          if (debug)
-            console.log("Found APP2 marker (0xffe2)");
+          if (debug) console.log("Found APP2 marker (0xffe2)");
           const formatPt = offset + 4;
           if (dataView.getUint32(formatPt) === 1297106432) {
             const tiffOffset = formatPt + 4;
@@ -433,7 +494,7 @@ class MPFExtractor {
                 dependantImages: dataView.getUint32(i + 12, !bigEnd),
                 start: -1,
                 end: -1,
-                isFII: false
+                isFII: false,
               };
               if (!image.dataOffset) {
                 image.start = 0;
@@ -466,16 +527,14 @@ class MPFExtractor {
 }
 const extractGainmapFromJPEG = async (jpegFile) => {
   const metadata = extractXMP(jpegFile);
-  if (!metadata)
-    throw new XMPMetadataNotFoundError("Gain map XMP metadata not found");
+  if (!metadata) throw new XMPMetadataNotFoundError("Gain map XMP metadata not found");
   const mpfExtractor = new MPFExtractor({ extractFII: true, extractNonFII: true });
   const images = await mpfExtractor.extract(jpegFile);
-  if (images.length !== 2)
-    throw new GainMapNotFoundError("Gain map recovery image not found");
+  if (images.length !== 2) throw new GainMapNotFoundError("Gain map recovery image not found");
   return {
     sdr: new Uint8Array(await images[0].arrayBuffer()),
     gainMap: new Uint8Array(await images[1].arrayBuffer()),
-    metadata
+    metadata,
   };
 };
 const getHTMLImageFromBlob = (blob) => {
@@ -498,8 +557,7 @@ class LoaderBaseShared extends Loader {
   constructor(config, manager) {
     super(manager);
     this._config = config;
-    if (config.renderer)
-      this._renderer = config.renderer;
+    if (config.renderer) this._renderer = config.renderer;
     this._internalLoadingManager = new LoadingManager();
   }
   setRenderer(renderer) {
@@ -512,7 +570,9 @@ class LoaderBaseShared extends Loader {
   }
   prepareQuadRenderer() {
     if (!this._renderer) {
-      console.warn("WARNING: A Renderer was not passed to this Loader constructor or in setRenderer, the result of this Loader will need to be converted to a Data Texture with toDataTexture() before you can use it in your renderer.");
+      console.warn(
+        "WARNING: A Renderer was not passed to this Loader constructor or in setRenderer, the result of this Loader will need to be converted to a Data Texture with toDataTexture() before you can use it in your renderer.",
+      );
     }
     const material = this._config.createMaterial({
       gainMapMax: [1, 1, 1],
@@ -524,7 +584,7 @@ class LoaderBaseShared extends Loader {
       hdrCapacityMin: 0,
       maxDisplayBoost: 1,
       gainMap: new Texture(),
-      sdr: new Texture()
+      sdr: new Texture(),
     });
     return this._config.createQuadRenderer({
       width: 16,
@@ -533,7 +593,7 @@ class LoaderBaseShared extends Loader {
       colorSpace: LinearSRGBColorSpace,
       material,
       renderer: this._renderer,
-      renderTargetOptions: this._renderTargetOptions
+      renderTargetOptions: this._renderTargetOptions,
     });
   }
   async processImages(sdrBuffer, gainMapBuffer, imageOrientation) {
@@ -545,15 +605,17 @@ class LoaderBaseShared extends Loader {
     if (typeof createImageBitmap === "undefined") {
       const res = await Promise.all([
         gainMapBlob ? getHTMLImageFromBlob(gainMapBlob) : Promise.resolve(void 0),
-        getHTMLImageFromBlob(sdrBlob)
+        getHTMLImageFromBlob(sdrBlob),
       ]);
       gainMapImage = res[0];
       sdrImage = res[1];
       needsFlip = imageOrientation === "flipY";
     } else {
       const res = await Promise.all([
-        gainMapBlob ? createImageBitmap(gainMapBlob, { imageOrientation: imageOrientation || "flipY" }) : Promise.resolve(void 0),
-        createImageBitmap(sdrBlob, { imageOrientation: imageOrientation || "flipY" })
+        gainMapBlob
+          ? createImageBitmap(gainMapBlob, { imageOrientation: imageOrientation || "flipY" })
+          : Promise.resolve(void 0),
+        createImageBitmap(sdrBlob, { imageOrientation: imageOrientation || "flipY" }),
       ]);
       gainMapImage = res[0];
       sdrImage = res[1];
@@ -561,10 +623,32 @@ class LoaderBaseShared extends Loader {
     return { sdrImage, gainMapImage, needsFlip };
   }
   createTextures(sdrImage, gainMapImage, needsFlip) {
-    const gainMap = new Texture(gainMapImage || new ImageData(2, 2), UVMapping, ClampToEdgeWrapping, ClampToEdgeWrapping, LinearFilter, LinearMipMapLinearFilter, RGBAFormat, UnsignedByteType, 1, LinearSRGBColorSpace);
+    const gainMap = new Texture(
+      gainMapImage || new ImageData(2, 2),
+      UVMapping,
+      ClampToEdgeWrapping,
+      ClampToEdgeWrapping,
+      LinearFilter,
+      LinearMipMapLinearFilter,
+      RGBAFormat,
+      UnsignedByteType,
+      1,
+      LinearSRGBColorSpace,
+    );
     gainMap.flipY = needsFlip;
     gainMap.needsUpdate = true;
-    const sdr = new Texture(sdrImage, UVMapping, ClampToEdgeWrapping, ClampToEdgeWrapping, LinearFilter, LinearMipMapLinearFilter, RGBAFormat, UnsignedByteType, 1, SRGBColorSpace);
+    const sdr = new Texture(
+      sdrImage,
+      UVMapping,
+      ClampToEdgeWrapping,
+      ClampToEdgeWrapping,
+      LinearFilter,
+      LinearMipMapLinearFilter,
+      RGBAFormat,
+      UnsignedByteType,
+      1,
+      SRGBColorSpace,
+    );
     sdr.flipY = needsFlip;
     sdr.needsUpdate = true;
     return { gainMap, sdr };
@@ -585,7 +669,7 @@ class LoaderBaseShared extends Loader {
     quadRenderer.material.needsUpdate = true;
   }
 }
-const vertexShader = (
+const vertexShader =
   /* glsl */
   `
 varying vec2 vUv;
@@ -594,9 +678,8 @@ void main() {
   vUv = uv;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }
-`
-);
-const fragmentShader = (
+`;
+const fragmentShader =
   /* glsl */
   `
 // min half float value
@@ -624,8 +707,7 @@ void main() {
   vec3 clampedHdrColor = max( HALF_FLOAT_MIN, min( HALF_FLOAT_MAX, hdrColor ));
   gl_FragColor = vec4( clampedHdrColor , 1.0 );
 }
-`
-);
+`;
 class GainMapDecoderMaterial extends ShaderMaterial {
   _maxDisplayBoost;
   _hdrCapacityMin;
@@ -634,7 +716,18 @@ class GainMapDecoderMaterial extends ShaderMaterial {
    *
    * @param params
    */
-  constructor({ gamma, offsetHdr, offsetSdr, gainMapMin, gainMapMax, maxDisplayBoost, hdrCapacityMin, hdrCapacityMax, sdr, gainMap }) {
+  constructor({
+    gamma,
+    offsetHdr,
+    offsetSdr,
+    gainMapMin,
+    gainMapMax,
+    maxDisplayBoost,
+    hdrCapacityMin,
+    hdrCapacityMax,
+    sdr,
+    gainMap,
+  }) {
     super({
       name: "GainMapDecoderMaterial",
       vertexShader,
@@ -648,12 +741,12 @@ class GainMapDecoderMaterial extends ShaderMaterial {
         gainMapMin: { value: new Vector3().fromArray(gainMapMin) },
         gainMapMax: { value: new Vector3().fromArray(gainMapMax) },
         weightFactor: {
-          value: (Math.log2(maxDisplayBoost) - hdrCapacityMin) / (hdrCapacityMax - hdrCapacityMin)
-        }
+          value: (Math.log2(maxDisplayBoost) - hdrCapacityMin) / (hdrCapacityMax - hdrCapacityMin),
+        },
       },
       blending: NoBlending,
       depthTest: false,
-      depthWrite: false
+      depthWrite: false,
     });
     this._maxDisplayBoost = maxDisplayBoost;
     this._hdrCapacityMin = hdrCapacityMin;
@@ -756,17 +849,22 @@ class GainMapDecoderMaterial extends ShaderMaterial {
     this.calculateWeight();
   }
   calculateWeight() {
-    const val = (Math.log2(this._maxDisplayBoost) - this._hdrCapacityMin) / (this._hdrCapacityMax - this._hdrCapacityMin);
+    const val =
+      (Math.log2(this._maxDisplayBoost) - this._hdrCapacityMin) /
+      (this._hdrCapacityMax - this._hdrCapacityMin);
     this.uniforms.weightFactor.value = Math.max(0, Math.min(1, val));
   }
 }
 class LoaderBaseWebGL extends LoaderBaseShared {
   constructor(renderer, manager) {
-    super({
-      renderer,
-      createMaterial: (params) => new GainMapDecoderMaterial(params),
-      createQuadRenderer: (params) => new QuadRenderer(params)
-    }, manager);
+    super(
+      {
+        renderer,
+        createMaterial: (params) => new GainMapDecoderMaterial(params),
+        createQuadRenderer: (params) => new QuadRenderer(params),
+      },
+      manager,
+    );
   }
   /**
    * @private
@@ -776,7 +874,11 @@ class LoaderBaseWebGL extends LoaderBaseShared {
    * @param gainMapBuffer
    */
   async render(quadRenderer, metadata, sdrBuffer, gainMapBuffer) {
-    const { sdrImage, gainMapImage, needsFlip } = await this.processImages(sdrBuffer, gainMapBuffer, "flipY");
+    const { sdrImage, gainMapImage, needsFlip } = await this.processImages(
+      sdrBuffer,
+      gainMapBuffer,
+      "flipY",
+    );
     const { gainMap, sdr } = this.createTextures(sdrImage, gainMapImage, needsFlip);
     this.updateQuadRenderer(quadRenderer, sdrImage, gainMap, sdr, metadata);
     quadRenderer.render();
@@ -810,13 +912,11 @@ class GainMapLoader extends LoaderBaseWebGL {
           this.manager.itemError(sdrUrl);
           this.manager.itemError(gainMapUrl);
           this.manager.itemError(metadataUrl);
-          if (typeof onError === "function")
-            onError(error);
+          if (typeof onError === "function") onError(error);
           quadRenderer.disposeOnDemandRenderer();
           return;
         }
-        if (typeof onLoad === "function")
-          onLoad(quadRenderer);
+        if (typeof onLoad === "function") onLoad(quadRenderer);
         this.manager.itemEnd(sdrUrl);
         this.manager.itemEnd(gainMapUrl);
         this.manager.itemEnd(metadataUrl);
@@ -836,7 +936,8 @@ class GainMapLoader extends LoaderBaseWebGL {
       if (typeof onProgress === "function") {
         const total = sdrTotal + gainMapTotal + metadataTotal;
         const loaded = sdrLoaded + gainMapLoaded + metadataLoaded;
-        const lengthComputable = sdrLengthComputable && gainMapLengthComputable && metadataLengthComputable;
+        const lengthComputable =
+          sdrLengthComputable && gainMapLengthComputable && metadataLengthComputable;
         onProgress(new ProgressEvent("progress", { lengthComputable, loaded, total }));
       }
     };
@@ -848,60 +949,69 @@ class GainMapLoader extends LoaderBaseWebGL {
     sdrLoader.setRequestHeader(this.requestHeader);
     sdrLoader.setPath(this.path);
     sdrLoader.setWithCredentials(this.withCredentials);
-    sdrLoader.load(sdrUrl, async (buffer) => {
-      if (typeof buffer === "string")
-        throw new Error("Invalid sdr buffer");
-      sdr = buffer;
-      await loadCheck();
-    }, (e) => {
-      sdrLengthComputable = e.lengthComputable;
-      sdrLoaded = e.loaded;
-      sdrTotal = e.total;
-      progressHandler();
-    }, (error) => {
-      this.manager.itemError(sdrUrl);
-      if (typeof onError === "function")
-        onError(error);
-    });
+    sdrLoader.load(
+      sdrUrl,
+      async (buffer) => {
+        if (typeof buffer === "string") throw new Error("Invalid sdr buffer");
+        sdr = buffer;
+        await loadCheck();
+      },
+      (e) => {
+        sdrLengthComputable = e.lengthComputable;
+        sdrLoaded = e.loaded;
+        sdrTotal = e.total;
+        progressHandler();
+      },
+      (error) => {
+        this.manager.itemError(sdrUrl);
+        if (typeof onError === "function") onError(error);
+      },
+    );
     const gainMapLoader = new FileLoader(this._internalLoadingManager);
     gainMapLoader.setResponseType("arraybuffer");
     gainMapLoader.setRequestHeader(this.requestHeader);
     gainMapLoader.setPath(this.path);
     gainMapLoader.setWithCredentials(this.withCredentials);
-    gainMapLoader.load(gainMapUrl, async (buffer) => {
-      if (typeof buffer === "string")
-        throw new Error("Invalid gainmap buffer");
-      gainMap = buffer;
-      await loadCheck();
-    }, (e) => {
-      gainMapLengthComputable = e.lengthComputable;
-      gainMapLoaded = e.loaded;
-      gainMapTotal = e.total;
-      progressHandler();
-    }, (error) => {
-      this.manager.itemError(gainMapUrl);
-      if (typeof onError === "function")
-        onError(error);
-    });
+    gainMapLoader.load(
+      gainMapUrl,
+      async (buffer) => {
+        if (typeof buffer === "string") throw new Error("Invalid gainmap buffer");
+        gainMap = buffer;
+        await loadCheck();
+      },
+      (e) => {
+        gainMapLengthComputable = e.lengthComputable;
+        gainMapLoaded = e.loaded;
+        gainMapTotal = e.total;
+        progressHandler();
+      },
+      (error) => {
+        this.manager.itemError(gainMapUrl);
+        if (typeof onError === "function") onError(error);
+      },
+    );
     const metadataLoader = new FileLoader(this._internalLoadingManager);
     metadataLoader.setRequestHeader(this.requestHeader);
     metadataLoader.setPath(this.path);
     metadataLoader.setWithCredentials(this.withCredentials);
-    metadataLoader.load(metadataUrl, async (json) => {
-      if (typeof json !== "string")
-        throw new Error("Invalid metadata string");
-      metadata = JSON.parse(json);
-      await loadCheck();
-    }, (e) => {
-      metadataLengthComputable = e.lengthComputable;
-      metadataLoaded = e.loaded;
-      metadataTotal = e.total;
-      progressHandler();
-    }, (error) => {
-      this.manager.itemError(metadataUrl);
-      if (typeof onError === "function")
-        onError(error);
-    });
+    metadataLoader.load(
+      metadataUrl,
+      async (json) => {
+        if (typeof json !== "string") throw new Error("Invalid metadata string");
+        metadata = JSON.parse(json);
+        await loadCheck();
+      },
+      (e) => {
+        metadataLengthComputable = e.lengthComputable;
+        metadataLoaded = e.loaded;
+        metadataTotal = e.total;
+        progressHandler();
+      },
+      (error) => {
+        this.manager.itemError(metadataUrl);
+        if (typeof onError === "function") onError(error);
+      },
+    );
     return quadRenderer;
   }
 }
@@ -924,57 +1034,58 @@ class HDRJPGLoader extends LoaderBaseWebGL {
     loader.setPath(this.path);
     loader.setWithCredentials(this.withCredentials);
     this.manager.itemStart(url);
-    loader.load(url, async (jpeg) => {
-      if (typeof jpeg === "string")
-        throw new Error("Invalid buffer, received [string], was expecting [ArrayBuffer]");
-      const jpegBuffer = new Uint8Array(jpeg);
-      let sdrJPEG;
-      let gainMapJPEG;
-      let metadata;
-      try {
-        const extractionResult = await extractGainmapFromJPEG(jpegBuffer);
-        sdrJPEG = extractionResult.sdr;
-        gainMapJPEG = extractionResult.gainMap;
-        metadata = extractionResult.metadata;
-      } catch (e) {
-        if (e instanceof XMPMetadataNotFoundError || e instanceof GainMapNotFoundError) {
-          console.warn(`Failure to reconstruct an HDR image from ${url}: Gain map metadata not found in the file, HDRJPGLoader will render the SDR jpeg`);
-          metadata = {
-            gainMapMin: [0, 0, 0],
-            gainMapMax: [1, 1, 1],
-            gamma: [1, 1, 1],
-            hdrCapacityMin: 0,
-            hdrCapacityMax: 1,
-            offsetHdr: [0, 0, 0],
-            offsetSdr: [0, 0, 0]
-          };
-          sdrJPEG = jpegBuffer;
-        } else {
-          throw e;
+    loader.load(
+      url,
+      async (jpeg) => {
+        if (typeof jpeg === "string")
+          throw new Error("Invalid buffer, received [string], was expecting [ArrayBuffer]");
+        const jpegBuffer = new Uint8Array(jpeg);
+        let sdrJPEG;
+        let gainMapJPEG;
+        let metadata;
+        try {
+          const extractionResult = await extractGainmapFromJPEG(jpegBuffer);
+          sdrJPEG = extractionResult.sdr;
+          gainMapJPEG = extractionResult.gainMap;
+          metadata = extractionResult.metadata;
+        } catch (e) {
+          if (e instanceof XMPMetadataNotFoundError || e instanceof GainMapNotFoundError) {
+            console.warn(
+              `Failure to reconstruct an HDR image from ${url}: Gain map metadata not found in the file, HDRJPGLoader will render the SDR jpeg`,
+            );
+            metadata = {
+              gainMapMin: [0, 0, 0],
+              gainMapMax: [1, 1, 1],
+              gamma: [1, 1, 1],
+              hdrCapacityMin: 0,
+              hdrCapacityMax: 1,
+              offsetHdr: [0, 0, 0],
+              offsetSdr: [0, 0, 0],
+            };
+            sdrJPEG = jpegBuffer;
+          } else {
+            throw e;
+          }
         }
-      }
-      try {
-        await this.render(quadRenderer, metadata, sdrJPEG.buffer, gainMapJPEG?.buffer);
-      } catch (error) {
-        this.manager.itemError(url);
-        if (typeof onError === "function")
-          onError(error);
+        try {
+          await this.render(quadRenderer, metadata, sdrJPEG.buffer, gainMapJPEG?.buffer);
+        } catch (error) {
+          this.manager.itemError(url);
+          if (typeof onError === "function") onError(error);
+          quadRenderer.disposeOnDemandRenderer();
+          return;
+        }
+        if (typeof onLoad === "function") onLoad(quadRenderer);
+        this.manager.itemEnd(url);
         quadRenderer.disposeOnDemandRenderer();
-        return;
-      }
-      if (typeof onLoad === "function")
-        onLoad(quadRenderer);
-      this.manager.itemEnd(url);
-      quadRenderer.disposeOnDemandRenderer();
-    }, onProgress, (error) => {
-      this.manager.itemError(url);
-      if (typeof onError === "function")
-        onError(error);
-    });
+      },
+      onProgress,
+      (error) => {
+        this.manager.itemError(url);
+        if (typeof onError === "function") onError(error);
+      },
+    );
     return quadRenderer;
   }
 }
-export {
-  GainMapLoader as G,
-  HDRJPGLoader as H
-};
+export { GainMapLoader as G, HDRJPGLoader as H };

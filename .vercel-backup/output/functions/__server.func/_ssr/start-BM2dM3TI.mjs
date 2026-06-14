@@ -2,7 +2,7 @@ import { r as renderErrorPage } from "./index.mjs";
 var createMiddleware = (options, __opts) => {
   const resolvedOptions = {
     type: "request",
-    ...__opts || options
+    ...(__opts || options),
   };
   return {
     options: resolvedOptions,
@@ -17,7 +17,7 @@ var createMiddleware = (options, __opts) => {
     },
     server: (server) => {
       return createMiddleware({}, Object.assign(resolvedOptions, { server }));
-    }
+    },
   };
 };
 function dedupeSerializationAdapters(deduped, serializationAdapters) {
@@ -40,7 +40,7 @@ var createStart = (getOptions) => {
       }
       return options;
     },
-    createMiddleware
+    createMiddleware,
   };
 };
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
@@ -53,13 +53,11 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
     console.error(error);
     return new Response(renderErrorPage(), {
       status: 500,
-      headers: { "content-type": "text/html; charset=utf-8" }
+      headers: { "content-type": "text/html; charset=utf-8" },
     });
   }
 });
 const startInstance = createStart(() => ({
-  requestMiddleware: [errorMiddleware]
+  requestMiddleware: [errorMiddleware],
 }));
-export {
-  startInstance
-};
+export { startInstance };

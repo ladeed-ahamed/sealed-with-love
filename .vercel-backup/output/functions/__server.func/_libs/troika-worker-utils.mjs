@@ -6,17 +6,16 @@ function workerBootstrap() {
     var dependencies = ref.dependencies;
     if (dependencies === void 0) dependencies = [];
     var init = ref.init;
-    if (init === void 0) init = function() {
-    };
+    if (init === void 0) init = function () {};
     var getTransferables = ref.getTransferables;
     if (getTransferables === void 0) getTransferables = null;
     if (modules[id]) {
       return;
     }
     try {
-      dependencies = dependencies.map(function(dep) {
+      dependencies = dependencies.map(function (dep) {
         if (dep && dep.isWorkerModule) {
-          registerModule(dep, function(depResult) {
+          registerModule(dep, function (depResult) {
             if (depResult instanceof Error) {
               throw depResult;
             }
@@ -38,7 +37,7 @@ function workerBootstrap() {
       modules[id] = {
         id,
         value,
-        getTransferables
+        getTransferables,
       };
       callback(value);
     } catch (err) {
@@ -53,12 +52,14 @@ function workerBootstrap() {
     var id = ref.id;
     var args = ref.args;
     if (!modules[id] || typeof modules[id].value !== "function") {
-      callback(new Error("Worker module " + id + ": not found or its 'init' did not return a function"));
+      callback(
+        new Error("Worker module " + id + ": not found or its 'init' did not return a function"),
+      );
     }
     try {
       var result = (ref$1 = modules[id]).value.apply(ref$1, args);
       if (result && typeof result.then === "function") {
-        result.then(handleResult, function(rej) {
+        result.then(handleResult, function (rej) {
           return callback(rej instanceof Error ? rej : new Error("" + rej));
         });
       } else {
@@ -82,14 +83,13 @@ function workerBootstrap() {
   }
   function rehydrate(name, str) {
     var result = void 0;
-    self.troikaDefine = function(r) {
-      return result = r;
+    self.troikaDefine = function (r) {
+      return (result = r);
     };
     var url = URL.createObjectURL(
-      new Blob(
-        ["/** " + name.replace(/\*/g, "") + " **/\n\ntroikaDefine(\n" + str + "\n)"],
-        { type: "application/javascript" }
-      )
+      new Blob(["/** " + name.replace(/\*/g, "") + " **/\n\ntroikaDefine(\n" + str + "\n)"], {
+        type: "application/javascript",
+      }),
     );
     try {
       importScripts(url);
@@ -100,43 +100,46 @@ function workerBootstrap() {
     delete self.troikaDefine;
     return result;
   }
-  self.addEventListener("message", function(e) {
+  self.addEventListener("message", function (e) {
     var ref = e.data;
     var messageId = ref.messageId;
     var action = ref.action;
     var data = ref.data;
     try {
       if (action === "registerModule") {
-        registerModule(data, function(result) {
+        registerModule(data, function (result) {
           if (result instanceof Error) {
             postMessage({
               messageId,
               success: false,
-              error: result.message
+              error: result.message,
             });
           } else {
             postMessage({
               messageId,
               success: true,
-              result: { isCallable: typeof result === "function" }
+              result: { isCallable: typeof result === "function" },
             });
           }
         });
       }
       if (action === "callModule") {
-        callModule(data, function(result, transferables) {
+        callModule(data, function (result, transferables) {
           if (result instanceof Error) {
             postMessage({
               messageId,
               success: false,
-              error: result.message
+              error: result.message,
             });
           } else {
-            postMessage({
-              messageId,
-              success: true,
-              result
-            }, transferables || void 0);
+            postMessage(
+              {
+                messageId,
+                success: true,
+                result,
+              },
+              transferables || void 0,
+            );
           }
         });
       }
@@ -144,63 +147,70 @@ function workerBootstrap() {
       postMessage({
         messageId,
         success: false,
-        error: err.stack
+        error: err.stack,
       });
     }
   });
 }
 function defineMainThreadModule(options) {
-  var moduleFunc = function() {
-    var args = [], len = arguments.length;
+  var moduleFunc = function () {
+    var args = [],
+      len = arguments.length;
     while (len--) args[len] = arguments[len];
-    return moduleFunc._getInitResult().then(function(initResult) {
+    return moduleFunc._getInitResult().then(function (initResult) {
       if (typeof initResult === "function") {
         return initResult.apply(void 0, args);
       } else {
-        throw new Error("Worker module function was called but `init` did not return a callable function");
+        throw new Error(
+          "Worker module function was called but `init` did not return a callable function",
+        );
       }
     });
   };
-  moduleFunc._getInitResult = function() {
+  moduleFunc._getInitResult = function () {
     var dependencies = options.dependencies;
     var init = options.init;
-    dependencies = Array.isArray(dependencies) ? dependencies.map(function(dep) {
-      if (dep) {
-        dep = dep.onMainThread || dep;
-        if (dep._getInitResult) {
-          dep = dep._getInitResult();
-        }
-      }
-      return dep;
-    }) : [];
-    var initPromise = Promise.all(dependencies).then(function(deps) {
+    dependencies = Array.isArray(dependencies)
+      ? dependencies.map(function (dep) {
+          if (dep) {
+            dep = dep.onMainThread || dep;
+            if (dep._getInitResult) {
+              dep = dep._getInitResult();
+            }
+          }
+          return dep;
+        })
+      : [];
+    var initPromise = Promise.all(dependencies).then(function (deps) {
       return init.apply(null, deps);
     });
-    moduleFunc._getInitResult = function() {
+    moduleFunc._getInitResult = function () {
       return initPromise;
     };
     return initPromise;
   };
   return moduleFunc;
 }
-var supportsWorkers = function() {
+var supportsWorkers = function () {
   var supported = false;
   if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     try {
       var worker = new Worker(
-        URL.createObjectURL(new Blob([""], { type: "application/javascript" }))
+        URL.createObjectURL(new Blob([""], { type: "application/javascript" })),
       );
       worker.terminate();
       supported = true;
     } catch (err) {
       {
         console.log(
-          "Troika createWorkerModule: web workers not allowed; falling back to main thread execution. Cause: [" + err.message + "]"
+          "Troika createWorkerModule: web workers not allowed; falling back to main thread execution. Cause: [" +
+            err.message +
+            "]",
         );
       }
     }
   }
-  supportsWorkers = function() {
+  supportsWorkers = function () {
     return supported;
   };
   return supported;
@@ -226,41 +236,48 @@ function defineWorkerModule(options) {
   var id = "workerModule" + ++_workerModuleId;
   var name = options.name || id;
   var registrationPromise = null;
-  dependencies = dependencies && dependencies.map(function(dep) {
-    if (typeof dep === "function" && !dep.workerModuleData) {
-      _allowInitAsString = true;
-      dep = defineWorkerModule({
-        workerId,
-        name: "<" + name + "> function dependency: " + dep.name,
-        init: "function(){return (\n" + stringifyFunction(dep) + "\n)}"
-      });
-      _allowInitAsString = false;
-    }
-    if (dep && dep.workerModuleData) {
-      dep = dep.workerModuleData;
-    }
-    return dep;
-  });
+  dependencies =
+    dependencies &&
+    dependencies.map(function (dep) {
+      if (typeof dep === "function" && !dep.workerModuleData) {
+        _allowInitAsString = true;
+        dep = defineWorkerModule({
+          workerId,
+          name: "<" + name + "> function dependency: " + dep.name,
+          init: "function(){return (\n" + stringifyFunction(dep) + "\n)}",
+        });
+        _allowInitAsString = false;
+      }
+      if (dep && dep.workerModuleData) {
+        dep = dep.workerModuleData;
+      }
+      return dep;
+    });
   function moduleFunc() {
-    var args = [], len = arguments.length;
+    var args = [],
+      len = arguments.length;
     while (len--) args[len] = arguments[len];
     if (!supportsWorkers()) {
       return onMainThread.apply(void 0, args);
     }
     if (!registrationPromise) {
       registrationPromise = callWorker(workerId, "registerModule", moduleFunc.workerModuleData);
-      var unregister = function() {
+      var unregister = function () {
         registrationPromise = null;
         registeredModules[workerId].delete(unregister);
       };
-      (registeredModules[workerId] || (registeredModules[workerId] = /* @__PURE__ */ new Set())).add(unregister);
+      (
+        registeredModules[workerId] || (registeredModules[workerId] = /* @__PURE__ */ new Set())
+      ).add(unregister);
     }
-    return registrationPromise.then(function(ref) {
+    return registrationPromise.then(function (ref) {
       var isCallable = ref.isCallable;
       if (isCallable) {
         return callWorker(workerId, "callModule", { id, args });
       } else {
-        throw new Error("Worker module function was called but `init` did not return a callable function");
+        throw new Error(
+          "Worker module function was called but `init` did not return a callable function",
+        );
       }
     });
   }
@@ -270,14 +287,14 @@ function defineWorkerModule(options) {
     name,
     dependencies,
     init: stringifyFunction(init),
-    getTransferables: getTransferables && stringifyFunction(getTransferables)
+    getTransferables: getTransferables && stringifyFunction(getTransferables),
   };
   moduleFunc.onMainThread = onMainThread;
   return moduleFunc;
 }
 function terminateWorker(workerId) {
   if (registeredModules[workerId]) {
-    registeredModules[workerId].forEach(function(unregister) {
+    registeredModules[workerId].forEach(function (unregister) {
       unregister();
     });
   }
@@ -300,12 +317,18 @@ function getWorker(workerId) {
     worker = workers[workerId] = new Worker(
       URL.createObjectURL(
         new Blob(
-          ["/** Worker Module Bootstrap: " + workerId.replace(/\*/g, "") + " **/\n\n;(" + bootstrap + ")()"],
-          { type: "application/javascript" }
-        )
-      )
+          [
+            "/** Worker Module Bootstrap: " +
+              workerId.replace(/\*/g, "") +
+              " **/\n\n;(" +
+              bootstrap +
+              ")()",
+          ],
+          { type: "application/javascript" },
+        ),
+      ),
     );
-    worker.onmessage = function(e) {
+    worker.onmessage = function (e) {
       var response = e.data;
       var msgId = response.messageId;
       var callback = openRequests[msgId];
@@ -319,9 +342,9 @@ function getWorker(workerId) {
   return worker;
 }
 function callWorker(workerId, action, data) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     var messageId = ++_messageId;
-    openRequests[messageId] = function(response) {
+    openRequests[messageId] = function (response) {
       if (response.success) {
         resolve(response.result);
       } else {
@@ -331,11 +354,8 @@ function callWorker(workerId, action, data) {
     getWorker(workerId).postMessage({
       messageId,
       action,
-      data
+      data,
     });
   });
 }
-export {
-  defineWorkerModule as d,
-  terminateWorker as t
-};
+export { defineWorkerModule as d, terminateWorker as t };

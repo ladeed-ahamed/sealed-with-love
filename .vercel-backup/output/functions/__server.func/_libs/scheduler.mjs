@@ -5,14 +5,15 @@ var hasRequiredScheduler_production;
 function requireScheduler_production() {
   if (hasRequiredScheduler_production) return scheduler_production;
   hasRequiredScheduler_production = 1;
-  (function(exports) {
+  (function (exports) {
     function push(heap, node) {
       var index = heap.length;
       heap.push(node);
       a: for (; 0 < index; ) {
-        var parentIndex = index - 1 >>> 1, parent = heap[parentIndex];
+        var parentIndex = (index - 1) >>> 1,
+          parent = heap[parentIndex];
         if (0 < compare(parent, node))
-          heap[parentIndex] = node, heap[index] = parent, index = parentIndex;
+          ((heap[parentIndex] = node), (heap[index] = parent), (index = parentIndex));
         else break a;
       }
     }
@@ -21,15 +22,24 @@ function requireScheduler_production() {
     }
     function pop(heap) {
       if (0 === heap.length) return null;
-      var first = heap[0], last = heap.pop();
+      var first = heap[0],
+        last = heap.pop();
       if (last !== first) {
         heap[0] = last;
-        a: for (var index = 0, length = heap.length, halfLength = length >>> 1; index < halfLength; ) {
-          var leftIndex = 2 * (index + 1) - 1, left = heap[leftIndex], rightIndex = leftIndex + 1, right = heap[rightIndex];
+        a: for (
+          var index = 0, length = heap.length, halfLength = length >>> 1;
+          index < halfLength;
+        ) {
+          var leftIndex = 2 * (index + 1) - 1,
+            left = heap[leftIndex],
+            rightIndex = leftIndex + 1,
+            right = heap[rightIndex];
           if (0 > compare(left, last))
-            rightIndex < length && 0 > compare(right, left) ? (heap[index] = right, heap[rightIndex] = last, index = rightIndex) : (heap[index] = left, heap[leftIndex] = last, index = leftIndex);
+            rightIndex < length && 0 > compare(right, left)
+              ? ((heap[index] = right), (heap[rightIndex] = last), (index = rightIndex))
+              : ((heap[index] = left), (heap[leftIndex] = last), (index = leftIndex));
           else if (rightIndex < length && 0 > compare(right, last))
-            heap[index] = right, heap[rightIndex] = last, index = rightIndex;
+            ((heap[index] = right), (heap[rightIndex] = last), (index = rightIndex));
           else break a;
         }
       }
@@ -42,21 +52,33 @@ function requireScheduler_production() {
     exports.unstable_now = void 0;
     if ("object" === typeof performance && "function" === typeof performance.now) {
       var localPerformance = performance;
-      exports.unstable_now = function() {
+      exports.unstable_now = function () {
         return localPerformance.now();
       };
     } else {
-      var localDate = Date, initialTime = localDate.now();
-      exports.unstable_now = function() {
+      var localDate = Date,
+        initialTime = localDate.now();
+      exports.unstable_now = function () {
         return localDate.now() - initialTime;
       };
     }
-    var taskQueue = [], timerQueue = [], taskIdCounter = 1, currentTask = null, currentPriorityLevel = 3, isPerformingWork = false, isHostCallbackScheduled = false, isHostTimeoutScheduled = false, needsPaint = false, localSetTimeout = "function" === typeof setTimeout ? setTimeout : null, localClearTimeout = "function" === typeof clearTimeout ? clearTimeout : null, localSetImmediate = "undefined" !== typeof setImmediate ? setImmediate : null;
+    var taskQueue = [],
+      timerQueue = [],
+      taskIdCounter = 1,
+      currentTask = null,
+      currentPriorityLevel = 3,
+      isPerformingWork = false,
+      isHostCallbackScheduled = false,
+      isHostTimeoutScheduled = false,
+      needsPaint = false,
+      localSetTimeout = "function" === typeof setTimeout ? setTimeout : null,
+      localClearTimeout = "function" === typeof clearTimeout ? clearTimeout : null,
+      localSetImmediate = "undefined" !== typeof setImmediate ? setImmediate : null;
     function advanceTimers(currentTime) {
       for (var timer = peek(timerQueue); null !== timer; ) {
         if (null === timer.callback) pop(timerQueue);
         else if (timer.startTime <= currentTime)
-          pop(timerQueue), timer.sortIndex = timer.expirationTime, push(taskQueue, timer);
+          (pop(timerQueue), (timer.sortIndex = timer.expirationTime), push(taskQueue, timer));
         else break;
         timer = peek(timerQueue);
       }
@@ -66,13 +88,19 @@ function requireScheduler_production() {
       advanceTimers(currentTime);
       if (!isHostCallbackScheduled)
         if (null !== peek(taskQueue))
-          isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline());
+          ((isHostCallbackScheduled = true),
+            isMessageLoopRunning ||
+              ((isMessageLoopRunning = true), schedulePerformWorkUntilDeadline()));
         else {
           var firstTimer = peek(timerQueue);
-          null !== firstTimer && requestHostTimeout(handleTimeout, firstTimer.startTime - currentTime);
+          null !== firstTimer &&
+            requestHostTimeout(handleTimeout, firstTimer.startTime - currentTime);
         }
     }
-    var isMessageLoopRunning = false, taskTimeoutID = -1, frameInterval = 5, startTime = -1;
+    var isMessageLoopRunning = false,
+      taskTimeoutID = -1,
+      frameInterval = 5,
+      startTime = -1;
     function shouldYieldToHost() {
       return needsPaint ? true : exports.unstable_now() - startTime < frameInterval ? false : true;
     }
@@ -85,20 +113,25 @@ function requireScheduler_production() {
         try {
           a: {
             isHostCallbackScheduled = false;
-            isHostTimeoutScheduled && (isHostTimeoutScheduled = false, localClearTimeout(taskTimeoutID), taskTimeoutID = -1);
+            isHostTimeoutScheduled &&
+              ((isHostTimeoutScheduled = false),
+              localClearTimeout(taskTimeoutID),
+              (taskTimeoutID = -1));
             isPerformingWork = true;
             var previousPriorityLevel = currentPriorityLevel;
             try {
               b: {
                 advanceTimers(currentTime);
-                for (currentTask = peek(taskQueue); null !== currentTask && !(currentTask.expirationTime > currentTime && shouldYieldToHost()); ) {
+                for (
+                  currentTask = peek(taskQueue);
+                  null !== currentTask &&
+                  !(currentTask.expirationTime > currentTime && shouldYieldToHost());
+                ) {
                   var callback = currentTask.callback;
                   if ("function" === typeof callback) {
                     currentTask.callback = null;
                     currentPriorityLevel = currentTask.priorityLevel;
-                    var continuationCallback = callback(
-                      currentTask.expirationTime <= currentTime
-                    );
+                    var continuationCallback = callback(currentTask.expirationTime <= currentTime);
                     currentTime = exports.unstable_now();
                     if ("function" === typeof continuationCallback) {
                       currentTask.callback = continuationCallback;
@@ -114,41 +147,42 @@ function requireScheduler_production() {
                 if (null !== currentTask) hasMoreWork = true;
                 else {
                   var firstTimer = peek(timerQueue);
-                  null !== firstTimer && requestHostTimeout(
-                    handleTimeout,
-                    firstTimer.startTime - currentTime
-                  );
+                  null !== firstTimer &&
+                    requestHostTimeout(handleTimeout, firstTimer.startTime - currentTime);
                   hasMoreWork = false;
                 }
               }
               break a;
             } finally {
-              currentTask = null, currentPriorityLevel = previousPriorityLevel, isPerformingWork = false;
+              ((currentTask = null),
+                (currentPriorityLevel = previousPriorityLevel),
+                (isPerformingWork = false));
             }
             hasMoreWork = void 0;
           }
         } finally {
-          hasMoreWork ? schedulePerformWorkUntilDeadline() : isMessageLoopRunning = false;
+          hasMoreWork ? schedulePerformWorkUntilDeadline() : (isMessageLoopRunning = false);
         }
       }
     }
     var schedulePerformWorkUntilDeadline;
     if ("function" === typeof localSetImmediate)
-      schedulePerformWorkUntilDeadline = function() {
+      schedulePerformWorkUntilDeadline = function () {
         localSetImmediate(performWorkUntilDeadline);
       };
     else if ("undefined" !== typeof MessageChannel) {
-      var channel = new MessageChannel(), port = channel.port2;
+      var channel = new MessageChannel(),
+        port = channel.port2;
       channel.port1.onmessage = performWorkUntilDeadline;
-      schedulePerformWorkUntilDeadline = function() {
+      schedulePerformWorkUntilDeadline = function () {
         port.postMessage(null);
       };
     } else
-      schedulePerformWorkUntilDeadline = function() {
+      schedulePerformWorkUntilDeadline = function () {
         localSetTimeout(performWorkUntilDeadline, 0);
       };
     function requestHostTimeout(callback, ms) {
-      taskTimeoutID = localSetTimeout(function() {
+      taskTimeoutID = localSetTimeout(function () {
         callback(exports.unstable_now());
       }, ms);
     }
@@ -158,18 +192,20 @@ function requireScheduler_production() {
     exports.unstable_NormalPriority = 3;
     exports.unstable_Profiling = null;
     exports.unstable_UserBlockingPriority = 2;
-    exports.unstable_cancelCallback = function(task) {
+    exports.unstable_cancelCallback = function (task) {
       task.callback = null;
     };
-    exports.unstable_forceFrameRate = function(fps) {
-      0 > fps || 125 < fps ? console.error(
-        "forceFrameRate takes a positive int between 0 and 125, forcing frame rates higher than 125 fps is not supported"
-      ) : frameInterval = 0 < fps ? Math.floor(1e3 / fps) : 5;
+    exports.unstable_forceFrameRate = function (fps) {
+      0 > fps || 125 < fps
+        ? console.error(
+            "forceFrameRate takes a positive int between 0 and 125, forcing frame rates higher than 125 fps is not supported",
+          )
+        : (frameInterval = 0 < fps ? Math.floor(1e3 / fps) : 5);
     };
-    exports.unstable_getCurrentPriorityLevel = function() {
+    exports.unstable_getCurrentPriorityLevel = function () {
       return currentPriorityLevel;
     };
-    exports.unstable_next = function(eventHandler) {
+    exports.unstable_next = function (eventHandler) {
       switch (currentPriorityLevel) {
         case 1:
         case 2:
@@ -187,10 +223,10 @@ function requireScheduler_production() {
         currentPriorityLevel = previousPriorityLevel;
       }
     };
-    exports.unstable_requestPaint = function() {
+    exports.unstable_requestPaint = function () {
       needsPaint = true;
     };
-    exports.unstable_runWithPriority = function(priorityLevel, eventHandler) {
+    exports.unstable_runWithPriority = function (priorityLevel, eventHandler) {
       switch (priorityLevel) {
         case 1:
         case 2:
@@ -209,9 +245,13 @@ function requireScheduler_production() {
         currentPriorityLevel = previousPriorityLevel;
       }
     };
-    exports.unstable_scheduleCallback = function(priorityLevel, callback, options) {
+    exports.unstable_scheduleCallback = function (priorityLevel, callback, options) {
       var currentTime = exports.unstable_now();
-      "object" === typeof options && null !== options ? (options = options.delay, options = "number" === typeof options && 0 < options ? currentTime + options : currentTime) : options = currentTime;
+      "object" === typeof options && null !== options
+        ? ((options = options.delay),
+          (options =
+            "number" === typeof options && 0 < options ? currentTime + options : currentTime))
+        : (options = currentTime);
       switch (priorityLevel) {
         case 1:
           var timeout = -1;
@@ -235,15 +275,30 @@ function requireScheduler_production() {
         priorityLevel,
         startTime: options,
         expirationTime: timeout,
-        sortIndex: -1
+        sortIndex: -1,
       };
-      options > currentTime ? (priorityLevel.sortIndex = options, push(timerQueue, priorityLevel), null === peek(taskQueue) && priorityLevel === peek(timerQueue) && (isHostTimeoutScheduled ? (localClearTimeout(taskTimeoutID), taskTimeoutID = -1) : isHostTimeoutScheduled = true, requestHostTimeout(handleTimeout, options - currentTime))) : (priorityLevel.sortIndex = timeout, push(taskQueue, priorityLevel), isHostCallbackScheduled || isPerformingWork || (isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline())));
+      options > currentTime
+        ? ((priorityLevel.sortIndex = options),
+          push(timerQueue, priorityLevel),
+          null === peek(taskQueue) &&
+            priorityLevel === peek(timerQueue) &&
+            (isHostTimeoutScheduled
+              ? (localClearTimeout(taskTimeoutID), (taskTimeoutID = -1))
+              : (isHostTimeoutScheduled = true),
+            requestHostTimeout(handleTimeout, options - currentTime)))
+        : ((priorityLevel.sortIndex = timeout),
+          push(taskQueue, priorityLevel),
+          isHostCallbackScheduled ||
+            isPerformingWork ||
+            ((isHostCallbackScheduled = true),
+            isMessageLoopRunning ||
+              ((isMessageLoopRunning = true), schedulePerformWorkUntilDeadline())));
       return priorityLevel;
     };
     exports.unstable_shouldYield = shouldYieldToHost;
-    exports.unstable_wrapCallback = function(callback) {
+    exports.unstable_wrapCallback = function (callback) {
       var parentPriorityLevel = currentPriorityLevel;
-      return function() {
+      return function () {
         var previousPriorityLevel = currentPriorityLevel;
         currentPriorityLevel = parentPriorityLevel;
         try {
@@ -267,7 +322,4 @@ function requireScheduler() {
 }
 var schedulerExports = requireScheduler();
 const Tb = /* @__PURE__ */ getDefaultExportFromCjs(schedulerExports);
-export {
-  Tb as T,
-  schedulerExports as s
-};
+export { Tb as T, schedulerExports as s };

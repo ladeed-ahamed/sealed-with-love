@@ -4,12 +4,30 @@ import { wedding } from "@/lib/wedding-data";
 
 export function Envelope({ onOpen }: { onOpen: () => void }) {
   const [opening, setOpening] = useState(false);
+  const [burstHearts, setBurstHearts] = useState<
+    { id: number; x: number; y: number; scale: number; color: string }[]
+  >([]);
   const reduce = useReducedMotion();
 
   const handleOpen = () => {
     if (opening) return;
     setOpening(true);
-    window.setTimeout(onOpen, reduce ? 200 : 2000);
+
+    // Generate circular explosion of rose gold heart particles
+    const hearts = Array.from({ length: 18 }, (_, i) => {
+      const angle = (i / 18) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+      const velocity = 80 + Math.random() * 140;
+      return {
+        id: i,
+        x: Math.cos(angle) * velocity,
+        y: Math.sin(angle) * velocity - 15,
+        scale: 0.6 + Math.random() * 0.8,
+        color: "var(--rosegold)",
+      };
+    });
+    setBurstHearts(hearts);
+
+    window.setTimeout(onOpen, reduce ? 200 : 2400);
   };
 
   return (
@@ -17,7 +35,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
       {/* Soft shadow beneath */}
       <motion.div
         aria-hidden
-        className="absolute left-1/2 -translate-x-1/2 rounded-[50%] bg-envelope/40 blur-2xl"
+        className="absolute left-1/2 -translate-x-1/2 rounded-[50%] bg-gold/10 blur-2xl"
         style={{ bottom: -28, width: "80%", height: 40 }}
         animate={{ opacity: opening ? 0.2 : 0.5, scaleX: opening ? 1.15 : 1 }}
         transition={{ duration: 0.8 }}
@@ -28,7 +46,11 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
         whileHover={{ y: -4 }}
         animate={
           opening
-            ? { opacity: [1, 1, 0], scale: [1, 1, 0.9], transition: { duration: 3.5, times: [0, 0.75, 1], ease: "easeInOut" } }
+            ? {
+                opacity: [1, 1, 0],
+                scale: [1, 1, 0.9],
+                transition: { duration: 3.5, times: [0, 0.75, 1], ease: "easeInOut" },
+              }
             : { opacity: 1, scale: 1 }
         }
         onClick={handleOpen}
@@ -39,10 +61,9 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
         <div
           className="absolute inset-0 rounded-md"
           style={{
-            background:
-              "linear-gradient(160deg, oklch(0.34 0.06 40) 0%, oklch(0.28 0.06 38) 50%, oklch(0.24 0.05 36) 100%)",
+            background: "linear-gradient(135deg, oklch(0.98 0.01 65) 0%, oklch(0.94 0.02 65) 100%)",
             boxShadow:
-              "var(--shadow-envelope), inset 0 0 0 1px color-mix(in oklab, var(--rosegold) 55%, transparent), inset 0 0 0 2px color-mix(in oklab, var(--rosegold) 15%, transparent)",
+              "var(--shadow-envelope), inset 0 0 0 1.2px color-mix(in oklab, var(--rosegold) 35%, transparent), inset 0 0 0 2.2px color-mix(in oklab, var(--rosegold) 15%, transparent)",
           }}
         />
         {/* Paper texture overlay */}
@@ -62,32 +83,34 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
           style={{
             width: "82%",
             height: "78%",
-            background:
-              "linear-gradient(180deg, oklch(0.99 0.012 80), oklch(0.95 0.02 75))",
+            background: "linear-gradient(180deg, oklch(0.99 0.012 80), oklch(0.95 0.02 75))",
             boxShadow:
-              "0 12px 30px -10px rgba(0,0,0,0.45), inset 0 0 0 1px color-mix(in oklab, var(--rosegold) 35%, transparent)",
+              "0 12px 30px -10px rgba(42, 36, 33, 0.15), inset 0 0 0 1px color-mix(in oklab, var(--rosegold) 30%, transparent)",
             zIndex: 1,
           }}
-          initial={{ y: "0%", scale: 1, opacity: 1 }}
+          initial={{ y: "0%", scale: 1, opacity: 1, rotate: 0 }}
           animate={
-            opening 
-              ? { 
-                  y: ["0%", "-80%", "-130%"], 
-                  scale: [1, 1.05, 1.2],
-                  opacity: [1, 1, 0]
-                } 
-              : { y: "0%", scale: 1, opacity: 1 }
+            opening
+              ? {
+                  y: ["0%", "-30%", "-10%"],
+                  scale: [1, 1.05, 1.45],
+                  rotate: [0, -2, 0],
+                  opacity: [1, 1, 0],
+                }
+              : { y: "0%", scale: 1, opacity: 1, rotate: 0 }
           }
-          transition={{ 
-            duration: 2.0, 
-            delay: 0.6, 
-            times: [0, 0.5, 1],
-            ease: "easeInOut" 
+          transition={{
+            duration: 2.2,
+            delay: 0.6,
+            times: [0, 0.4, 1],
+            ease: "easeInOut",
           }}
         >
           <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-            <p className="font-label text-[10px] text-rosegold sm:text-xs">Wedding</p>
-            <p className="font-script text-3xl text-ink sm:text-4xl">Invitation</p>
+            <p className="font-label text-[10px] text-gold sm:text-xs tracking-widest font-semibold">
+              Wedding
+            </p>
+            <p className="font-script text-4xl text-rosegold">Invitation</p>
           </div>
         </motion.div>
 
@@ -103,10 +126,8 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
             className="h-full w-full"
             style={{
               clipPath: "polygon(0 0, 100% 0, 50% 100%)",
-              background:
-                "linear-gradient(180deg, oklch(0.36 0.06 40), oklch(0.28 0.06 38))",
-              boxShadow:
-                "inset 0 0 0 1px color-mix(in oklab, var(--rosegold) 55%, transparent)",
+              background: "linear-gradient(180deg, oklch(0.98 0.01 65), oklch(0.93 0.02 65))",
+              boxShadow: "inset 0 0 0 1.2px color-mix(in oklab, var(--rosegold) 35%, transparent)",
             }}
           />
         </motion.div>
@@ -115,10 +136,9 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
         <motion.div
           className="absolute left-1/2 top-[50%] z-10 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full sm:h-24 sm:w-24"
           style={{
-            background:
-              "radial-gradient(circle at 30% 25%, oklch(0.55 0.16 30), oklch(0.38 0.14 28) 60%, oklch(0.30 0.10 25))",
+            background: "linear-gradient(135deg, var(--rosegold) 0%, oklch(0.58 0.10 5) 100%)",
             boxShadow:
-              "0 8px 18px -4px rgba(0,0,0,0.55), inset 0 0 0 2px color-mix(in oklab, var(--rosegold) 45%, transparent), inset 0 -4px 10px rgba(0,0,0,0.4)",
+              "0 8px 18px -4px rgba(42, 36, 33, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.25)",
           }}
           animate={
             opening
@@ -132,14 +152,12 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
           }
         >
           <div className="text-center leading-none">
-            <div className="font-script text-[11px] text-rosegold-soft sm:text-xs">
-              {wedding.groom.firstName}
+            <div className="font-script text-[14px] text-white sm:text-base">
+              {wedding.groom.firstName[0]}
             </div>
-            <div className="font-label text-[9px] tracking-widest text-rosegold-soft sm:text-[10px]">
-              &amp;
-            </div>
-            <div className="font-script text-[11px] text-rosegold-soft sm:text-xs">
-              {wedding.bride.firstName}
+            <div className="font-label text-[8px] tracking-widest text-white/80 my-0.5">&amp;</div>
+            <div className="font-script text-[14px] text-white sm:text-base">
+              {wedding.bride.firstName[0]}
             </div>
           </div>
         </motion.div>
@@ -153,8 +171,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
                 aria-hidden
                 className="absolute left-1/2 top-[50%] z-10 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-sm"
                 style={{
-                  background:
-                    "linear-gradient(135deg, oklch(0.48 0.15 30), oklch(0.32 0.12 26))",
+                  background: "var(--rosegold)",
                 }}
                 initial={{ opacity: 1, x: 0, y: 0, rotate: 0 }}
                 animate={{
@@ -174,8 +191,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
           aria-hidden
           className="absolute inset-0 rounded-md"
           style={{
-            boxShadow:
-              "0 0 60px color-mix(in oklab, var(--rosegold) 25%, transparent)",
+            boxShadow: "0 0 60px color-mix(in oklab, var(--rosegold) 25%, transparent)",
           }}
         />
       </motion.div>
@@ -188,7 +204,31 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
         — TAP THE SEAL TO OPEN —
       </motion.p>
 
-      <span className="sr-only">{wedding.groom.firstName} and {wedding.bride.firstName}</span>
+      {/* Burst Heart Particles */}
+      {burstHearts.map((h) => (
+        <motion.div
+          key={h.id}
+          className="absolute z-[999] pointer-events-none select-none"
+          style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
+          initial={{ x: 0, y: 0, scale: 0, opacity: 1 }}
+          animate={{
+            x: h.x,
+            y: h.y,
+            scale: h.scale,
+            opacity: 0,
+            rotate: Math.random() * 360,
+          }}
+          transition={{ duration: 1.8, ease: "easeOut" }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill={h.color}>
+            <path d="M12 21s-7.5-4.6-9.5-9.4C1 7.9 3.7 4 7.6 4c2 0 3.4 1.1 4.4 2.6C13 5.1 14.4 4 16.4 4 20.3 4 23 7.9 21.5 11.6 19.5 16.4 12 21 12 21z" />
+          </svg>
+        </motion.div>
+      ))}
+
+      <span className="sr-only">
+        {wedding.groom.firstName} and {wedding.bride.firstName}
+      </span>
     </div>
   );
 }

@@ -35,7 +35,6 @@ function NotFoundComponent() {
   );
 }
 
-
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
@@ -80,9 +79,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Ajab & Amreen — A Wedding Invitation" },
-      { name: "description", content: "You are cordially invited to witness the celebration of love and togetherness." },
+      {
+        name: "description",
+        content: "You are cordially invited to witness the celebration of love and togetherness.",
+      },
       { property: "og:title", content: "Ajab & Amreen — A Wedding Invitation" },
-      { property: "og:description", content: "You are cordially invited to witness the celebration of love and togetherness." },
+      {
+        property: "og:description",
+        content: "You are cordially invited to witness the celebration of love and togetherness.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -92,7 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Patrick+Hand&family=VT323&family=Amiri:wght@400;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Great+Vibes&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Amiri:wght@400;700&display=swap",
       },
     ],
   }),

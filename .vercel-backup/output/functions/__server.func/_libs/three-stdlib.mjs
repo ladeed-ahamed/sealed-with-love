@@ -1,4 +1,32 @@
-import { o as REVISION, M as Mesh, I as IcosahedronGeometry, e as ShaderMaterial, D as DoubleSide, p as DataTextureLoader, H as HalfFloatType, F as FloatType, q as DataUtils, r as LinearFilter, f as RGBAFormat, s as RedFormat, t as InstancedBufferGeometry, u as Float32BufferAttribute, v as InstancedInterleavedBuffer, w as InterleavedBufferAttribute, x as WireframeGeometry, y as Box3, z as Sphere, h as Vector3, G as UniformsUtils, J as UniformsLib, g as Vector2, k as Vector4, K as Line3, Q as Matrix4, X as MathUtils } from "./three.mjs";
+import {
+  o as REVISION,
+  M as Mesh,
+  I as IcosahedronGeometry,
+  e as ShaderMaterial,
+  D as DoubleSide,
+  p as DataTextureLoader,
+  H as HalfFloatType,
+  F as FloatType,
+  q as DataUtils,
+  r as LinearFilter,
+  f as RGBAFormat,
+  s as RedFormat,
+  t as InstancedBufferGeometry,
+  u as Float32BufferAttribute,
+  v as InstancedInterleavedBuffer,
+  w as InterleavedBufferAttribute,
+  x as WireframeGeometry,
+  y as Box3,
+  z as Sphere,
+  h as Vector3,
+  G as UniformsUtils,
+  J as UniformsLib,
+  g as Vector2,
+  k as Vector4,
+  K as Line3,
+  Q as Matrix4,
+  X as MathUtils,
+} from "./three.mjs";
 import { u as unzlibSync } from "./fflate.mjs";
 const version = /* @__PURE__ */ (() => parseInt(REVISION.replace(/\D+/g, "")))();
 const UV1 = version >= 125 ? "uv1" : "uv2";
@@ -7,7 +35,14 @@ class GroundProjectedEnv extends Mesh {
   constructor(texture, options) {
     var _a, _b;
     const isCubeMap = isCubeTexture(texture);
-    const w = (_b = isCubeMap ? (_a = texture.image[0]) == null ? void 0 : _a.width : texture.image.width) != null ? _b : 1024;
+    const w =
+      (_b = isCubeMap
+        ? (_a = texture.image[0]) == null
+          ? void 0
+          : _a.width
+        : texture.image.width) != null
+        ? _b
+        : 1024;
     const cubeSize = w / 4;
     const _lodMax = Math.floor(Math.log2(cubeSize));
     const _cubeSize = Math.pow(2, _lodMax);
@@ -17,9 +52,9 @@ class GroundProjectedEnv extends Mesh {
       isCubeMap ? "#define ENVMAP_TYPE_CUBE" : "",
       `#define CUBEUV_TEXEL_WIDTH ${1 / width}`,
       `#define CUBEUV_TEXEL_HEIGHT ${1 / height}`,
-      `#define CUBEUV_MAX_MIP ${_lodMax}.0`
+      `#define CUBEUV_MAX_MIP ${_lodMax}.0`,
     ];
-    const vertexShader = (
+    const vertexShader =
       /* glsl */
       `
         varying vec3 vWorldPosition;
@@ -30,10 +65,10 @@ class GroundProjectedEnv extends Mesh {
             
             gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
         }
-        `
-    );
-    const fragmentShader = defines.join("\n") + /* glsl */
-    `
+        `;
+    const fragmentShader =
+      defines.join("\n") /* glsl */ +
+      `
         #define ENVMAP_TYPE_CUBE_UV
         varying vec3 vWorldPosition;
         uniform float radius;
@@ -108,14 +143,14 @@ class GroundProjectedEnv extends Mesh {
     const uniforms = {
       map: { value: texture },
       height: { value: (options == null ? void 0 : options.height) || 15 },
-      radius: { value: (options == null ? void 0 : options.radius) || 100 }
+      radius: { value: (options == null ? void 0 : options.radius) || 100 },
     };
     const geometry = new IcosahedronGeometry(1, 16);
     const material = new ShaderMaterial({
       uniforms,
       fragmentShader,
       vertexShader,
-      side: DoubleSide
+      side: DoubleSide,
     });
     super(geometry, material);
   }
@@ -139,158 +174,190 @@ class RGBELoader extends DataTextureLoader {
   }
   // adapted from http://www.graphics.cornell.edu/~bjw/rgbe.html
   parse(buffer) {
-    const rgbe_read_error = 1, rgbe_write_error = 2, rgbe_format_error = 3, rgbe_memory_error = 4, rgbe_error = function(rgbe_error_code, msg) {
-      switch (rgbe_error_code) {
-        case rgbe_read_error:
-          throw new Error("THREE.RGBELoader: Read Error: " + (msg || ""));
-        case rgbe_write_error:
-          throw new Error("THREE.RGBELoader: Write Error: " + (msg || ""));
-        case rgbe_format_error:
-          throw new Error("THREE.RGBELoader: Bad File Format: " + (msg || ""));
-        default:
-        case rgbe_memory_error:
-          throw new Error("THREE.RGBELoader: Memory Error: " + (msg || ""));
-      }
-    }, RGBE_VALID_PROGRAMTYPE = 1, RGBE_VALID_FORMAT = 2, RGBE_VALID_DIMENSIONS = 4, NEWLINE = "\n", fgets = function(buffer2, lineLimit, consume) {
-      const chunkSize = 128;
-      lineLimit = !lineLimit ? 1024 : lineLimit;
-      let p = buffer2.pos, i = -1, len = 0, s = "", chunk = String.fromCharCode.apply(null, new Uint16Array(buffer2.subarray(p, p + chunkSize)));
-      while (0 > (i = chunk.indexOf(NEWLINE)) && len < lineLimit && p < buffer2.byteLength) {
-        s += chunk;
-        len += chunk.length;
-        p += chunkSize;
-        chunk += String.fromCharCode.apply(null, new Uint16Array(buffer2.subarray(p, p + chunkSize)));
-      }
-      if (-1 < i) {
-        buffer2.pos += len + i + 1;
-        return s + chunk.slice(0, i);
-      }
-      return false;
-    }, RGBE_ReadHeader = function(buffer2) {
-      const magic_token_re = /^#\?(\S+)/, gamma_re = /^\s*GAMMA\s*=\s*(\d+(\.\d+)?)\s*$/, exposure_re = /^\s*EXPOSURE\s*=\s*(\d+(\.\d+)?)\s*$/, format_re = /^\s*FORMAT=(\S+)\s*$/, dimensions_re = /^\s*\-Y\s+(\d+)\s+\+X\s+(\d+)\s*$/, header = {
-        valid: 0,
-        string: "",
-        comments: "",
-        programtype: "RGBE",
-        format: "",
-        gamma: 1,
-        exposure: 1,
-        width: 0,
-        height: 0
-      };
-      let line, match;
-      if (buffer2.pos >= buffer2.byteLength || !(line = fgets(buffer2))) {
-        rgbe_error(rgbe_read_error, "no header found");
-      }
-      if (!(match = line.match(magic_token_re))) {
-        rgbe_error(rgbe_format_error, "bad initial token");
-      }
-      header.valid |= RGBE_VALID_PROGRAMTYPE;
-      header.programtype = match[1];
-      header.string += line + "\n";
-      while (true) {
-        line = fgets(buffer2);
-        if (false === line)
-          break;
+    const rgbe_read_error = 1,
+      rgbe_write_error = 2,
+      rgbe_format_error = 3,
+      rgbe_memory_error = 4,
+      rgbe_error = function (rgbe_error_code, msg) {
+        switch (rgbe_error_code) {
+          case rgbe_read_error:
+            throw new Error("THREE.RGBELoader: Read Error: " + (msg || ""));
+          case rgbe_write_error:
+            throw new Error("THREE.RGBELoader: Write Error: " + (msg || ""));
+          case rgbe_format_error:
+            throw new Error("THREE.RGBELoader: Bad File Format: " + (msg || ""));
+          default:
+          case rgbe_memory_error:
+            throw new Error("THREE.RGBELoader: Memory Error: " + (msg || ""));
+        }
+      },
+      RGBE_VALID_PROGRAMTYPE = 1,
+      RGBE_VALID_FORMAT = 2,
+      RGBE_VALID_DIMENSIONS = 4,
+      NEWLINE = "\n",
+      fgets = function (buffer2, lineLimit, consume) {
+        const chunkSize = 128;
+        lineLimit = !lineLimit ? 1024 : lineLimit;
+        let p = buffer2.pos,
+          i = -1,
+          len = 0,
+          s = "",
+          chunk = String.fromCharCode.apply(
+            null,
+            new Uint16Array(buffer2.subarray(p, p + chunkSize)),
+          );
+        while (0 > (i = chunk.indexOf(NEWLINE)) && len < lineLimit && p < buffer2.byteLength) {
+          s += chunk;
+          len += chunk.length;
+          p += chunkSize;
+          chunk += String.fromCharCode.apply(
+            null,
+            new Uint16Array(buffer2.subarray(p, p + chunkSize)),
+          );
+        }
+        if (-1 < i) {
+          buffer2.pos += len + i + 1;
+          return s + chunk.slice(0, i);
+        }
+        return false;
+      },
+      RGBE_ReadHeader = function (buffer2) {
+        const magic_token_re = /^#\?(\S+)/,
+          gamma_re = /^\s*GAMMA\s*=\s*(\d+(\.\d+)?)\s*$/,
+          exposure_re = /^\s*EXPOSURE\s*=\s*(\d+(\.\d+)?)\s*$/,
+          format_re = /^\s*FORMAT=(\S+)\s*$/,
+          dimensions_re = /^\s*\-Y\s+(\d+)\s+\+X\s+(\d+)\s*$/,
+          header = {
+            valid: 0,
+            string: "",
+            comments: "",
+            programtype: "RGBE",
+            format: "",
+            gamma: 1,
+            exposure: 1,
+            width: 0,
+            height: 0,
+          };
+        let line, match;
+        if (buffer2.pos >= buffer2.byteLength || !(line = fgets(buffer2))) {
+          rgbe_error(rgbe_read_error, "no header found");
+        }
+        if (!(match = line.match(magic_token_re))) {
+          rgbe_error(rgbe_format_error, "bad initial token");
+        }
+        header.valid |= RGBE_VALID_PROGRAMTYPE;
+        header.programtype = match[1];
         header.string += line + "\n";
-        if ("#" === line.charAt(0)) {
-          header.comments += line + "\n";
-          continue;
-        }
-        if (match = line.match(gamma_re)) {
-          header.gamma = parseFloat(match[1]);
-        }
-        if (match = line.match(exposure_re)) {
-          header.exposure = parseFloat(match[1]);
-        }
-        if (match = line.match(format_re)) {
-          header.valid |= RGBE_VALID_FORMAT;
-          header.format = match[1];
-        }
-        if (match = line.match(dimensions_re)) {
-          header.valid |= RGBE_VALID_DIMENSIONS;
-          header.height = parseInt(match[1], 10);
-          header.width = parseInt(match[2], 10);
-        }
-        if (header.valid & RGBE_VALID_FORMAT && header.valid & RGBE_VALID_DIMENSIONS)
-          break;
-      }
-      if (!(header.valid & RGBE_VALID_FORMAT)) {
-        rgbe_error(rgbe_format_error, "missing format specifier");
-      }
-      if (!(header.valid & RGBE_VALID_DIMENSIONS)) {
-        rgbe_error(rgbe_format_error, "missing image size specifier");
-      }
-      return header;
-    }, RGBE_ReadPixels_RLE = function(buffer2, w2, h2) {
-      const scanline_width = w2;
-      if (
-        // run length encoding is not allowed so read flat
-        scanline_width < 8 || scanline_width > 32767 || // this file is not run length encoded
-        2 !== buffer2[0] || 2 !== buffer2[1] || buffer2[2] & 128
-      ) {
-        return new Uint8Array(buffer2);
-      }
-      if (scanline_width !== (buffer2[2] << 8 | buffer2[3])) {
-        rgbe_error(rgbe_format_error, "wrong scanline width");
-      }
-      const data_rgba = new Uint8Array(4 * w2 * h2);
-      if (!data_rgba.length) {
-        rgbe_error(rgbe_memory_error, "unable to allocate buffer space");
-      }
-      let offset = 0, pos = 0;
-      const ptr_end = 4 * scanline_width;
-      const rgbeStart = new Uint8Array(4);
-      const scanline_buffer = new Uint8Array(ptr_end);
-      let num_scanlines = h2;
-      while (num_scanlines > 0 && pos < buffer2.byteLength) {
-        if (pos + 4 > buffer2.byteLength) {
-          rgbe_error(rgbe_read_error);
-        }
-        rgbeStart[0] = buffer2[pos++];
-        rgbeStart[1] = buffer2[pos++];
-        rgbeStart[2] = buffer2[pos++];
-        rgbeStart[3] = buffer2[pos++];
-        if (2 != rgbeStart[0] || 2 != rgbeStart[1] || (rgbeStart[2] << 8 | rgbeStart[3]) != scanline_width) {
-          rgbe_error(rgbe_format_error, "bad rgbe scanline format");
-        }
-        let ptr = 0, count;
-        while (ptr < ptr_end && pos < buffer2.byteLength) {
-          count = buffer2[pos++];
-          const isEncodedRun = count > 128;
-          if (isEncodedRun)
-            count -= 128;
-          if (0 === count || ptr + count > ptr_end) {
-            rgbe_error(rgbe_format_error, "bad scanline data");
+        while (true) {
+          line = fgets(buffer2);
+          if (false === line) break;
+          header.string += line + "\n";
+          if ("#" === line.charAt(0)) {
+            header.comments += line + "\n";
+            continue;
           }
-          if (isEncodedRun) {
-            const byteValue = buffer2[pos++];
-            for (let i = 0; i < count; i++) {
-              scanline_buffer[ptr++] = byteValue;
+          if ((match = line.match(gamma_re))) {
+            header.gamma = parseFloat(match[1]);
+          }
+          if ((match = line.match(exposure_re))) {
+            header.exposure = parseFloat(match[1]);
+          }
+          if ((match = line.match(format_re))) {
+            header.valid |= RGBE_VALID_FORMAT;
+            header.format = match[1];
+          }
+          if ((match = line.match(dimensions_re))) {
+            header.valid |= RGBE_VALID_DIMENSIONS;
+            header.height = parseInt(match[1], 10);
+            header.width = parseInt(match[2], 10);
+          }
+          if (header.valid & RGBE_VALID_FORMAT && header.valid & RGBE_VALID_DIMENSIONS) break;
+        }
+        if (!(header.valid & RGBE_VALID_FORMAT)) {
+          rgbe_error(rgbe_format_error, "missing format specifier");
+        }
+        if (!(header.valid & RGBE_VALID_DIMENSIONS)) {
+          rgbe_error(rgbe_format_error, "missing image size specifier");
+        }
+        return header;
+      },
+      RGBE_ReadPixels_RLE = function (buffer2, w2, h2) {
+        const scanline_width = w2;
+        if (
+          // run length encoding is not allowed so read flat
+          scanline_width < 8 ||
+          scanline_width > 32767 || // this file is not run length encoded
+          2 !== buffer2[0] ||
+          2 !== buffer2[1] ||
+          buffer2[2] & 128
+        ) {
+          return new Uint8Array(buffer2);
+        }
+        if (scanline_width !== ((buffer2[2] << 8) | buffer2[3])) {
+          rgbe_error(rgbe_format_error, "wrong scanline width");
+        }
+        const data_rgba = new Uint8Array(4 * w2 * h2);
+        if (!data_rgba.length) {
+          rgbe_error(rgbe_memory_error, "unable to allocate buffer space");
+        }
+        let offset = 0,
+          pos = 0;
+        const ptr_end = 4 * scanline_width;
+        const rgbeStart = new Uint8Array(4);
+        const scanline_buffer = new Uint8Array(ptr_end);
+        let num_scanlines = h2;
+        while (num_scanlines > 0 && pos < buffer2.byteLength) {
+          if (pos + 4 > buffer2.byteLength) {
+            rgbe_error(rgbe_read_error);
+          }
+          rgbeStart[0] = buffer2[pos++];
+          rgbeStart[1] = buffer2[pos++];
+          rgbeStart[2] = buffer2[pos++];
+          rgbeStart[3] = buffer2[pos++];
+          if (
+            2 != rgbeStart[0] ||
+            2 != rgbeStart[1] ||
+            ((rgbeStart[2] << 8) | rgbeStart[3]) != scanline_width
+          ) {
+            rgbe_error(rgbe_format_error, "bad rgbe scanline format");
+          }
+          let ptr = 0,
+            count;
+          while (ptr < ptr_end && pos < buffer2.byteLength) {
+            count = buffer2[pos++];
+            const isEncodedRun = count > 128;
+            if (isEncodedRun) count -= 128;
+            if (0 === count || ptr + count > ptr_end) {
+              rgbe_error(rgbe_format_error, "bad scanline data");
             }
-          } else {
-            scanline_buffer.set(buffer2.subarray(pos, pos + count), ptr);
-            ptr += count;
-            pos += count;
+            if (isEncodedRun) {
+              const byteValue = buffer2[pos++];
+              for (let i = 0; i < count; i++) {
+                scanline_buffer[ptr++] = byteValue;
+              }
+            } else {
+              scanline_buffer.set(buffer2.subarray(pos, pos + count), ptr);
+              ptr += count;
+              pos += count;
+            }
           }
+          const l = scanline_width;
+          for (let i = 0; i < l; i++) {
+            let off = 0;
+            data_rgba[offset] = scanline_buffer[i + off];
+            off += scanline_width;
+            data_rgba[offset + 1] = scanline_buffer[i + off];
+            off += scanline_width;
+            data_rgba[offset + 2] = scanline_buffer[i + off];
+            off += scanline_width;
+            data_rgba[offset + 3] = scanline_buffer[i + off];
+            offset += 4;
+          }
+          num_scanlines--;
         }
-        const l = scanline_width;
-        for (let i = 0; i < l; i++) {
-          let off = 0;
-          data_rgba[offset] = scanline_buffer[i + off];
-          off += scanline_width;
-          data_rgba[offset + 1] = scanline_buffer[i + off];
-          off += scanline_width;
-          data_rgba[offset + 2] = scanline_buffer[i + off];
-          off += scanline_width;
-          data_rgba[offset + 3] = scanline_buffer[i + off];
-          offset += 4;
-        }
-        num_scanlines--;
-      }
-      return data_rgba;
-    };
-    const RGBEByteToRGBFloat = function(sourceArray, sourceOffset, destArray, destOffset) {
+        return data_rgba;
+      };
+    const RGBEByteToRGBFloat = function (sourceArray, sourceOffset, destArray, destOffset) {
       const e = sourceArray[sourceOffset + 3];
       const scale = Math.pow(2, e - 128) / 255;
       destArray[destOffset + 0] = sourceArray[sourceOffset + 0] * scale;
@@ -298,18 +365,26 @@ class RGBELoader extends DataTextureLoader {
       destArray[destOffset + 2] = sourceArray[sourceOffset + 2] * scale;
       destArray[destOffset + 3] = 1;
     };
-    const RGBEByteToRGBHalf = function(sourceArray, sourceOffset, destArray, destOffset) {
+    const RGBEByteToRGBHalf = function (sourceArray, sourceOffset, destArray, destOffset) {
       const e = sourceArray[sourceOffset + 3];
       const scale = Math.pow(2, e - 128) / 255;
-      destArray[destOffset + 0] = DataUtils.toHalfFloat(Math.min(sourceArray[sourceOffset + 0] * scale, 65504));
-      destArray[destOffset + 1] = DataUtils.toHalfFloat(Math.min(sourceArray[sourceOffset + 1] * scale, 65504));
-      destArray[destOffset + 2] = DataUtils.toHalfFloat(Math.min(sourceArray[sourceOffset + 2] * scale, 65504));
+      destArray[destOffset + 0] = DataUtils.toHalfFloat(
+        Math.min(sourceArray[sourceOffset + 0] * scale, 65504),
+      );
+      destArray[destOffset + 1] = DataUtils.toHalfFloat(
+        Math.min(sourceArray[sourceOffset + 1] * scale, 65504),
+      );
+      destArray[destOffset + 2] = DataUtils.toHalfFloat(
+        Math.min(sourceArray[sourceOffset + 2] * scale, 65504),
+      );
       destArray[destOffset + 3] = DataUtils.toHalfFloat(1);
     };
     const byteArray = new Uint8Array(buffer);
     byteArray.pos = 0;
     const rgbe_header_info = RGBE_ReadHeader(byteArray);
-    const w = rgbe_header_info.width, h = rgbe_header_info.height, image_rgba_data = RGBE_ReadPixels_RLE(byteArray.subarray(byteArray.pos), w, h);
+    const w = rgbe_header_info.width,
+      h = rgbe_header_info.height,
+      image_rgba_data = RGBE_ReadPixels_RLE(byteArray.subarray(byteArray.pos), w, h);
     let data, type;
     let numElements;
     switch (this.type) {
@@ -341,7 +416,7 @@ class RGBELoader extends DataTextureLoader {
       header: rgbe_header_info.string,
       gamma: rgbe_header_info.gamma,
       exposure: rgbe_header_info.exposure,
-      type
+      type,
     };
   }
   setDataType(value) {
@@ -353,18 +428,15 @@ class RGBELoader extends DataTextureLoader {
       switch (texture.type) {
         case FloatType:
         case HalfFloatType:
-          if ("colorSpace" in texture)
-            texture.colorSpace = "srgb-linear";
-          else
-            texture.encoding = 3e3;
+          if ("colorSpace" in texture) texture.colorSpace = "srgb-linear";
+          else texture.encoding = 3e3;
           texture.minFilter = LinearFilter;
           texture.magFilter = LinearFilter;
           texture.generateMipmaps = false;
           texture.flipY = true;
           break;
       }
-      if (onLoad)
-        onLoad(texture, texData);
+      if (onLoad) onLoad(texture, texData);
     }
     return super.load(url, onLoadCallback, onProgress, onError);
   }
@@ -384,7 +456,7 @@ class EXRLoader extends DataTextureLoader {
     const HUF_DECSIZE = 1 << HUF_DECBITS;
     const HUF_DECMASK = HUF_DECSIZE - 1;
     const NBITS = 16;
-    const A_OFFSET = 1 << NBITS - 1;
+    const A_OFFSET = 1 << (NBITS - 1);
     const MOD_MASK = (1 << NBITS) - 1;
     const SHORT_ZEROCODE_RUN = 59;
     const LONG_ZEROCODE_RUN = 63;
@@ -403,13 +475,12 @@ class EXRLoader extends DataTextureLoader {
     function reverseLutFromBitmap(bitmap, lut) {
       var k = 0;
       for (var i = 0; i < USHORT_RANGE; ++i) {
-        if (i == 0 || bitmap[i >> 3] & 1 << (i & 7)) {
+        if (i == 0 || bitmap[i >> 3] & (1 << (i & 7))) {
           lut[k++] = i;
         }
       }
       var n = k - 1;
-      while (k < USHORT_RANGE)
-        lut[k++] = 0;
+      while (k < USHORT_RANGE) lut[k++] = 0;
       return n;
     }
     function hufClearDecTable(hdec) {
@@ -423,30 +494,27 @@ class EXRLoader extends DataTextureLoader {
     const getBitsReturn = { l: 0, c: 0, lc: 0 };
     function getBits(nBits, c, lc, uInt8Array2, inOffset) {
       while (lc < nBits) {
-        c = c << 8 | parseUint8Array(uInt8Array2, inOffset);
+        c = (c << 8) | parseUint8Array(uInt8Array2, inOffset);
         lc += 8;
       }
       lc -= nBits;
-      getBitsReturn.l = c >> lc & (1 << nBits) - 1;
+      getBitsReturn.l = (c >> lc) & ((1 << nBits) - 1);
       getBitsReturn.c = c;
       getBitsReturn.lc = lc;
     }
     const hufTableBuffer = new Array(59);
     function hufCanonicalCodeTable(hcode) {
-      for (var i = 0; i <= 58; ++i)
-        hufTableBuffer[i] = 0;
-      for (var i = 0; i < HUF_ENCSIZE; ++i)
-        hufTableBuffer[hcode[i]] += 1;
+      for (var i = 0; i <= 58; ++i) hufTableBuffer[i] = 0;
+      for (var i = 0; i < HUF_ENCSIZE; ++i) hufTableBuffer[hcode[i]] += 1;
       var c = 0;
       for (var i = 58; i > 0; --i) {
-        var nc = c + hufTableBuffer[i] >> 1;
+        var nc = (c + hufTableBuffer[i]) >> 1;
         hufTableBuffer[i] = c;
         c = nc;
       }
       for (var i = 0; i < HUF_ENCSIZE; ++i) {
         var l = hcode[i];
-        if (l > 0)
-          hcode[i] = l | hufTableBuffer[l]++ << 6;
+        if (l > 0) hcode[i] = l | (hufTableBuffer[l]++ << 6);
       }
     }
     function hufUnpackEncTable(uInt8Array2, inDataView, inOffset, ni, im, iM, hcode) {
@@ -454,8 +522,7 @@ class EXRLoader extends DataTextureLoader {
       var c = 0;
       var lc = 0;
       for (; im <= iM; im++) {
-        if (p.value - inOffset.value > ni)
-          return false;
+        if (p.value - inOffset.value > ni) return false;
         getBits(6, c, lc, uInt8Array2, p);
         var l = getBitsReturn.l;
         c = getBitsReturn.c;
@@ -472,16 +539,14 @@ class EXRLoader extends DataTextureLoader {
           if (im + zerun > iM + 1) {
             throw "Something wrong with hufUnpackEncTable";
           }
-          while (zerun--)
-            hcode[im++] = 0;
+          while (zerun--) hcode[im++] = 0;
           im--;
         } else if (l >= SHORT_ZEROCODE_RUN) {
           var zerun = l - SHORT_ZEROCODE_RUN + 2;
           if (im + zerun > iM + 1) {
             throw "Something wrong with hufUnpackEncTable";
           }
-          while (zerun--)
-            hcode[im++] = 0;
+          while (zerun--) hcode[im++] = 0;
           im--;
         }
       }
@@ -501,7 +566,7 @@ class EXRLoader extends DataTextureLoader {
           throw "Invalid table entry";
         }
         if (l > HUF_DECBITS) {
-          var pl = hdecod[c >> l - HUF_DECBITS];
+          var pl = hdecod[c >> (l - HUF_DECBITS)];
           if (pl.len) {
             throw "Invalid table entry";
           }
@@ -518,8 +583,8 @@ class EXRLoader extends DataTextureLoader {
           pl.p[pl.lit - 1] = im;
         } else if (l) {
           var plOffset = 0;
-          for (var i = 1 << HUF_DECBITS - l; i > 0; i--) {
-            var pl = hdecod[(c << HUF_DECBITS - l) + plOffset];
+          for (var i = 1 << (HUF_DECBITS - l); i > 0; i--) {
+            var pl = hdecod[(c << (HUF_DECBITS - l)) + plOffset];
             if (pl.len || pl.p) {
               throw "Invalid table entry";
             }
@@ -533,13 +598,24 @@ class EXRLoader extends DataTextureLoader {
     }
     const getCharReturn = { c: 0, lc: 0 };
     function getChar(c, lc, uInt8Array2, inOffset) {
-      c = c << 8 | parseUint8Array(uInt8Array2, inOffset);
+      c = (c << 8) | parseUint8Array(uInt8Array2, inOffset);
       lc += 8;
       getCharReturn.c = c;
       getCharReturn.lc = lc;
     }
     const getCodeReturn = { c: 0, lc: 0 };
-    function getCode(po, rlc, c, lc, uInt8Array2, inDataView, inOffset, outBuffer, outBufferOffset, outBufferEndOffset) {
+    function getCode(
+      po,
+      rlc,
+      c,
+      lc,
+      uInt8Array2,
+      inDataView,
+      inOffset,
+      outBuffer,
+      outBufferOffset,
+      outBufferEndOffset,
+    ) {
       if (po == rlc) {
         if (lc < 8) {
           getChar(c, lc, uInt8Array2, inOffset);
@@ -585,8 +661,8 @@ class EXRLoader extends DataTextureLoader {
     function wdec16(l, h) {
       var m = UInt16(l);
       var d = UInt16(h);
-      var bb = m - (d >> 1) & MOD_MASK;
-      var aa = d + bb - A_OFFSET & MOD_MASK;
+      var bb = (m - (d >> 1)) & MOD_MASK;
+      var aa = (d + bb - A_OFFSET) & MOD_MASK;
       wdec14Return.a = aa;
       wdec14Return.b = bb;
     }
@@ -595,8 +671,7 @@ class EXRLoader extends DataTextureLoader {
       var n = nx > ny ? ny : nx;
       var p = 1;
       var p2;
-      while (p <= n)
-        p <<= 1;
+      while (p <= n) p <<= 1;
       p >>= 1;
       p2 = p;
       p >>= 1;
@@ -645,10 +720,8 @@ class EXRLoader extends DataTextureLoader {
           }
           if (nx & p) {
             var p10 = px + oy1;
-            if (w14)
-              wdec14(buffer2[px + j], buffer2[p10 + j]);
-            else
-              wdec16(buffer2[px + j], buffer2[p10 + j]);
+            if (w14) wdec14(buffer2[px + j], buffer2[p10 + j]);
+            else wdec16(buffer2[px + j], buffer2[p10 + j]);
             i00 = wdec14Return.a;
             buffer2[p10 + j] = wdec14Return.b;
             buffer2[px + j] = i00;
@@ -659,10 +732,8 @@ class EXRLoader extends DataTextureLoader {
           var ex = py + ox * (nx - p2);
           for (; px <= ex; px += ox2) {
             var p01 = px + ox1;
-            if (w14)
-              wdec14(buffer2[px + j], buffer2[p01 + j]);
-            else
-              wdec16(buffer2[px + j], buffer2[p01 + j]);
+            if (w14) wdec14(buffer2[px + j], buffer2[p01 + j]);
+            else wdec16(buffer2[px + j], buffer2[p01 + j]);
             i00 = wdec14Return.a;
             buffer2[p01 + j] = wdec14Return.b;
             buffer2[px + j] = i00;
@@ -673,7 +744,18 @@ class EXRLoader extends DataTextureLoader {
       }
       return py;
     }
-    function hufDecode(encodingTable, decodingTable, uInt8Array2, inDataView, inOffset, ni, rlc, no, outBuffer, outOffset) {
+    function hufDecode(
+      encodingTable,
+      decodingTable,
+      uInt8Array2,
+      inDataView,
+      inOffset,
+      ni,
+      rlc,
+      no,
+      outBuffer,
+      outOffset,
+    ) {
       var c = 0;
       var lc = 0;
       var outBufferEndOffset = no;
@@ -683,11 +765,22 @@ class EXRLoader extends DataTextureLoader {
         c = getCharReturn.c;
         lc = getCharReturn.lc;
         while (lc >= HUF_DECBITS) {
-          var index = c >> lc - HUF_DECBITS & HUF_DECMASK;
+          var index = (c >> (lc - HUF_DECBITS)) & HUF_DECMASK;
           var pl = decodingTable[index];
           if (pl.len) {
             lc -= pl.len;
-            getCode(pl.lit, rlc, c, lc, uInt8Array2, inDataView, inOffset, outBuffer, outOffset, outBufferEndOffset);
+            getCode(
+              pl.lit,
+              rlc,
+              c,
+              lc,
+              uInt8Array2,
+              inDataView,
+              inOffset,
+              outBuffer,
+              outOffset,
+              outBufferEndOffset,
+            );
             c = getCodeReturn.c;
             lc = getCodeReturn.lc;
           } else {
@@ -703,7 +796,7 @@ class EXRLoader extends DataTextureLoader {
                 lc = getCharReturn.lc;
               }
               if (lc >= l) {
-                if (hufCode(encodingTable[pl.p[j]]) == (c >> lc - l & (1 << l) - 1)) {
+                if (hufCode(encodingTable[pl.p[j]]) == ((c >> (lc - l)) & ((1 << l) - 1))) {
                   lc -= l;
                   getCode(
                     pl.p[j],
@@ -715,7 +808,7 @@ class EXRLoader extends DataTextureLoader {
                     inOffset,
                     outBuffer,
                     outOffset,
-                    outBufferEndOffset
+                    outBufferEndOffset,
                   );
                   c = getCodeReturn.c;
                   lc = getCodeReturn.lc;
@@ -729,14 +822,25 @@ class EXRLoader extends DataTextureLoader {
           }
         }
       }
-      var i = 8 - ni & 7;
+      var i = (8 - ni) & 7;
       c >>= i;
       lc -= i;
       while (lc > 0) {
-        var pl = decodingTable[c << HUF_DECBITS - lc & HUF_DECMASK];
+        var pl = decodingTable[(c << (HUF_DECBITS - lc)) & HUF_DECMASK];
         if (pl.len) {
           lc -= pl.len;
-          getCode(pl.lit, rlc, c, lc, uInt8Array2, inDataView, inOffset, outBuffer, outOffset, outBufferEndOffset);
+          getCode(
+            pl.lit,
+            rlc,
+            c,
+            lc,
+            uInt8Array2,
+            inDataView,
+            inOffset,
+            outBuffer,
+            outOffset,
+            outBufferEndOffset,
+          );
           c = getCodeReturn.c;
           lc = getCodeReturn.lc;
         } else {
@@ -765,7 +869,18 @@ class EXRLoader extends DataTextureLoader {
         throw "Something wrong with hufUncompress";
       }
       hufBuildDecTable(freq, im, iM, hdec);
-      hufDecode(freq, hdec, uInt8Array2, inDataView, inOffset, nBits, iM, nRaw, outBuffer, outOffset);
+      hufDecode(
+        freq,
+        hdec,
+        uInt8Array2,
+        inDataView,
+        inOffset,
+        nBits,
+        iM,
+        nRaw,
+        outBuffer,
+        outOffset,
+      );
     }
     function applyLut(lut, data, nData) {
       for (var i = 0; i < nData; ++i) {
@@ -784,11 +899,9 @@ class EXRLoader extends DataTextureLoader {
       var s = 0;
       var stop = source.length - 1;
       while (true) {
-        if (s > stop)
-          break;
+        if (s > stop) break;
         out[s++] = source[t1++];
-        if (s > stop)
-          break;
+        if (s > stop) break;
         out[s++] = source[t2++];
       }
     }
@@ -841,12 +954,10 @@ class EXRLoader extends DataTextureLoader {
       }
       for (let blocky = 0; blocky < numBlocksY; ++blocky) {
         var maxY = 8;
-        if (blocky == numBlocksY - 1)
-          maxY = leftoverY;
+        if (blocky == numBlocksY - 1) maxY = leftoverY;
         var maxX = 8;
         for (let blockx = 0; blockx < numBlocksX; ++blockx) {
-          if (blockx == numBlocksX - 1)
-            maxX = leftoverX;
+          if (blockx == numBlocksX - 1) maxX = leftoverX;
           for (let comp2 = 0; comp2 < numComp; ++comp2) {
             halfZigBlock[comp2].fill(0);
             halfZigBlock[comp2][0] = dcBuffer[currDcComp[comp2]++];
@@ -884,7 +995,11 @@ class EXRLoader extends DataTextureLoader {
               const offset3 = rowOffsets[comp2][y2] + 8 * numFullBlocksX * INT16_SIZE * type2;
               const src = numFullBlocksX * 64 + (y2 & 7) * 8;
               for (let x2 = 0; x2 < maxX; ++x2) {
-                dataView.setUint16(offset3 + x2 * INT16_SIZE * type2, rowBlock[comp2][src + x2], true);
+                dataView.setUint16(
+                  offset3 + x2 * INT16_SIZE * type2,
+                  rowBlock[comp2][src + x2],
+                  true,
+                );
               }
             }
           }
@@ -895,8 +1010,7 @@ class EXRLoader extends DataTextureLoader {
       for (var comp = 0; comp < numComp; ++comp) {
         channelData[cscSet.idx[comp]].decoded = true;
         var type = channelData[cscSet.idx[comp]].type;
-        if (channelData[comp].type != 2)
-          continue;
+        if (channelData[comp].type != 2) continue;
         for (var y = 0; y < height; ++y) {
           const offset2 = rowOffsets[comp][y];
           for (var x = 0; x < width; ++x) {
@@ -994,10 +1108,10 @@ class EXRLoader extends DataTextureLoader {
       const a = 0.5 * Math.cos(3.14159 / 4);
       const b = 0.5 * Math.cos(3.14159 / 16);
       const c = 0.5 * Math.cos(3.14159 / 8);
-      const d = 0.5 * Math.cos(3 * 3.14159 / 16);
-      const e = 0.5 * Math.cos(5 * 3.14159 / 16);
-      const f = 0.5 * Math.cos(3 * 3.14159 / 8);
-      const g = 0.5 * Math.cos(7 * 3.14159 / 16);
+      const d = 0.5 * Math.cos((3 * 3.14159) / 16);
+      const e = 0.5 * Math.cos((5 * 3.14159) / 16);
+      const f = 0.5 * Math.cos((3 * 3.14159) / 8);
+      const g = 0.5 * Math.cos((7 * 3.14159) / 16);
       var alpha = new Array(4);
       var beta = new Array(4);
       var theta = new Array(4);
@@ -1008,10 +1122,14 @@ class EXRLoader extends DataTextureLoader {
         alpha[1] = f * data[rowPtr + 2];
         alpha[2] = c * data[rowPtr + 6];
         alpha[3] = f * data[rowPtr + 6];
-        beta[0] = b * data[rowPtr + 1] + d * data[rowPtr + 3] + e * data[rowPtr + 5] + g * data[rowPtr + 7];
-        beta[1] = d * data[rowPtr + 1] - g * data[rowPtr + 3] - b * data[rowPtr + 5] - e * data[rowPtr + 7];
-        beta[2] = e * data[rowPtr + 1] - b * data[rowPtr + 3] + g * data[rowPtr + 5] + d * data[rowPtr + 7];
-        beta[3] = g * data[rowPtr + 1] - e * data[rowPtr + 3] + d * data[rowPtr + 5] - b * data[rowPtr + 7];
+        beta[0] =
+          b * data[rowPtr + 1] + d * data[rowPtr + 3] + e * data[rowPtr + 5] + g * data[rowPtr + 7];
+        beta[1] =
+          d * data[rowPtr + 1] - g * data[rowPtr + 3] - b * data[rowPtr + 5] - e * data[rowPtr + 7];
+        beta[2] =
+          e * data[rowPtr + 1] - b * data[rowPtr + 3] + g * data[rowPtr + 5] + d * data[rowPtr + 7];
+        beta[3] =
+          g * data[rowPtr + 1] - e * data[rowPtr + 3] + d * data[rowPtr + 5] - b * data[rowPtr + 7];
         theta[0] = a * (data[rowPtr + 0] + data[rowPtr + 4]);
         theta[3] = a * (data[rowPtr + 0] - data[rowPtr + 4]);
         theta[1] = alpha[0] + alpha[3];
@@ -1034,10 +1152,26 @@ class EXRLoader extends DataTextureLoader {
         alpha[1] = f * data[16 + column];
         alpha[2] = c * data[48 + column];
         alpha[3] = f * data[48 + column];
-        beta[0] = b * data[8 + column] + d * data[24 + column] + e * data[40 + column] + g * data[56 + column];
-        beta[1] = d * data[8 + column] - g * data[24 + column] - b * data[40 + column] - e * data[56 + column];
-        beta[2] = e * data[8 + column] - b * data[24 + column] + g * data[40 + column] + d * data[56 + column];
-        beta[3] = g * data[8 + column] - e * data[24 + column] + d * data[40 + column] - b * data[56 + column];
+        beta[0] =
+          b * data[8 + column] +
+          d * data[24 + column] +
+          e * data[40 + column] +
+          g * data[56 + column];
+        beta[1] =
+          d * data[8 + column] -
+          g * data[24 + column] -
+          b * data[40 + column] -
+          e * data[56 + column];
+        beta[2] =
+          e * data[8 + column] -
+          b * data[24 + column] +
+          g * data[40 + column] +
+          d * data[56 + column];
+        beta[3] =
+          g * data[8 + column] -
+          e * data[24 + column] +
+          d * data[40 + column] -
+          b * data[56 + column];
         theta[0] = a * (data[column] + data[32 + column]);
         theta[3] = a * (data[column] - data[32 + column]);
         theta[1] = alpha[0] + alpha[3];
@@ -1100,7 +1234,9 @@ class EXRLoader extends DataTextureLoader {
     function uncompressPIZ(info) {
       var inDataView = info.viewer;
       var inOffset = { value: info.offset.value };
-      var outBuffer = new Uint16Array(info.width * info.scanlineBlockSize * (info.channels * info.type));
+      var outBuffer = new Uint16Array(
+        info.width * info.scanlineBlockSize * (info.channels * info.type),
+      );
       var bitmap = new Uint8Array(BITMAP_SIZE);
       var outBufferEnd = 0;
       var pizChannelData = new Array(info.channels);
@@ -1165,7 +1301,7 @@ class EXRLoader extends DataTextureLoader {
               ptr[1] = ptr[0] + info.width;
               tmpBufferEnd = ptr[1] + info.width;
               for (let j = 0; j < info.width; ++j) {
-                const diff = rawBuffer[ptr[0]++] << 8 | rawBuffer[ptr[1]++];
+                const diff = (rawBuffer[ptr[0]++] << 8) | rawBuffer[ptr[1]++];
                 pixel += diff;
                 tmpBuffer[writePtr] = pixel;
                 writePtr++;
@@ -1177,7 +1313,10 @@ class EXRLoader extends DataTextureLoader {
               ptr[2] = ptr[1] + info.width;
               tmpBufferEnd = ptr[2] + info.width;
               for (let j = 0; j < info.width; ++j) {
-                const diff = rawBuffer[ptr[0]++] << 24 | rawBuffer[ptr[1]++] << 16 | rawBuffer[ptr[2]++] << 8;
+                const diff =
+                  (rawBuffer[ptr[0]++] << 24) |
+                  (rawBuffer[ptr[1]++] << 16) |
+                  (rawBuffer[ptr[2]++] << 8);
                 pixel += diff;
                 tmpBuffer[writePtr] = pixel;
                 writePtr++;
@@ -1191,7 +1330,9 @@ class EXRLoader extends DataTextureLoader {
     function uncompressDWA(info) {
       var inDataView = info.viewer;
       var inOffset = { value: info.offset.value };
-      var outBuffer = new Uint8Array(info.width * info.lines * (info.channels * info.type * INT16_SIZE));
+      var outBuffer = new Uint8Array(
+        info.width * info.lines * (info.channels * info.type * INT16_SIZE),
+      );
       var dwaHeader = {
         version: parseInt64(inDataView, inOffset),
         unknownUncompressedSize: parseInt64(inDataView, inOffset),
@@ -1203,17 +1344,23 @@ class EXRLoader extends DataTextureLoader {
         rleRawSize: parseInt64(inDataView, inOffset),
         totalAcUncompressedCount: parseInt64(inDataView, inOffset),
         totalDcUncompressedCount: parseInt64(inDataView, inOffset),
-        acCompression: parseInt64(inDataView, inOffset)
+        acCompression: parseInt64(inDataView, inOffset),
       };
       if (dwaHeader.version < 2) {
-        throw "EXRLoader.parse: " + EXRHeader.compression + " version " + dwaHeader.version + " is unsupported";
+        throw (
+          "EXRLoader.parse: " +
+          EXRHeader.compression +
+          " version " +
+          dwaHeader.version +
+          " is unsupported"
+        );
       }
       var channelRules = new Array();
       var ruleSize = parseUint16(inDataView, inOffset) - INT16_SIZE;
       while (ruleSize > 0) {
         var name = parseNullTerminatedString(inDataView.buffer, inOffset);
         var value = parseUint8(inDataView, inOffset);
-        var compression = value >> 2 & 3;
+        var compression = (value >> 2) & 3;
         var csc = (value >> 4) - 1;
         var index = new Int8Array([csc])[0];
         var type = parseUint8(inDataView, inOffset);
@@ -1221,14 +1368,14 @@ class EXRLoader extends DataTextureLoader {
           name,
           index,
           type,
-          compression
+          compression,
         });
         ruleSize -= name.length + 3;
       }
       var channels = EXRHeader.channels;
       var channelData = new Array(info.channels);
       for (var i = 0; i < info.channels; ++i) {
-        var cd = channelData[i] = {};
+        var cd = (channelData[i] = {});
         var channel = channels[i];
         cd.name = channel.name;
         cd.compression = UNKNOWN;
@@ -1239,7 +1386,7 @@ class EXRLoader extends DataTextureLoader {
         cd.height = info.lines;
       }
       var cscSet = {
-        idx: new Array(3)
+        idx: new Array(3),
       };
       for (var offset2 = 0; offset2 < info.channels; ++offset2) {
         var cd = channelData[offset2];
@@ -1264,11 +1411,14 @@ class EXRLoader extends DataTextureLoader {
               inOffset,
               dwaHeader.acCompressedSize,
               acBuffer,
-              dwaHeader.totalAcUncompressedCount
+              dwaHeader.totalAcUncompressedCount,
             );
             break;
           case DEFLATE:
-            var compressed = info.array.slice(inOffset.value, inOffset.value + dwaHeader.totalAcUncompressedCount);
+            var compressed = info.array.slice(
+              inOffset.value,
+              inOffset.value + dwaHeader.totalAcUncompressedCount,
+            );
             var data = unzlibSync(compressed);
             var acBuffer = new Uint16Array(data.buffer);
             inOffset.value += dwaHeader.totalAcUncompressedCount;
@@ -1279,13 +1429,16 @@ class EXRLoader extends DataTextureLoader {
         var zlibInfo = {
           array: info.array,
           offset: inOffset,
-          size: dwaHeader.dcCompressedSize
+          size: dwaHeader.dcCompressedSize,
         };
         var dcBuffer = new Uint16Array(uncompressZIP(zlibInfo).buffer);
         inOffset.value += dwaHeader.dcCompressedSize;
       }
       if (dwaHeader.rleRawSize > 0) {
-        var compressed = info.array.slice(inOffset.value, inOffset.value + dwaHeader.rleCompressedSize);
+        var compressed = info.array.slice(
+          inOffset.value,
+          inOffset.value + dwaHeader.rleCompressedSize,
+        );
         var data = unzlibSync(compressed);
         var rleBuffer = decodeRunLength(data.buffer);
         inOffset.value += dwaHeader.rleCompressedSize;
@@ -1304,8 +1457,7 @@ class EXRLoader extends DataTextureLoader {
       lossyDctDecode(cscSet, rowOffsets, channelData, acBuffer, dcBuffer, outBuffer);
       for (var i = 0; i < channelData.length; ++i) {
         var cd = channelData[i];
-        if (cd.decoded)
-          continue;
+        if (cd.decoded) continue;
         switch (cd.compression) {
           case RLE:
             var row = 0;
@@ -1334,12 +1486,16 @@ class EXRLoader extends DataTextureLoader {
       while (uintBuffer[offset2.value + endOffset] != 0) {
         endOffset += 1;
       }
-      var stringValue = new TextDecoder().decode(uintBuffer.slice(offset2.value, offset2.value + endOffset));
+      var stringValue = new TextDecoder().decode(
+        uintBuffer.slice(offset2.value, offset2.value + endOffset),
+      );
       offset2.value = offset2.value + endOffset + 1;
       return stringValue;
     }
     function parseFixedLengthString(buffer2, offset2, size) {
-      var stringValue = new TextDecoder().decode(new Uint8Array(buffer2).slice(offset2.value, offset2.value + size));
+      var stringValue = new TextDecoder().decode(
+        new Uint8Array(buffer2).slice(offset2.value, offset2.value + size),
+      );
       offset2.value = offset2.value + size;
       return stringValue;
     }
@@ -1373,12 +1529,14 @@ class EXRLoader extends DataTextureLoader {
       offset2.value = offset2.value + INT8_SIZE;
       return Uint8;
     }
-    const parseInt64 = function(dataView, offset2) {
+    const parseInt64 = function (dataView, offset2) {
       let int;
       if ("getBigInt64" in DataView.prototype) {
         int = Number(dataView.getBigInt64(offset2.value, true));
       } else {
-        int = dataView.getUint32(offset2.value + 4, true) + Number(dataView.getUint32(offset2.value, true) << 32);
+        int =
+          dataView.getUint32(offset2.value + 4, true) +
+          Number(dataView.getUint32(offset2.value, true) << 32);
       }
       offset2.value += ULONG_SIZE;
       return int;
@@ -1392,8 +1550,18 @@ class EXRLoader extends DataTextureLoader {
       return DataUtils.toHalfFloat(parseFloat32(dataView, offset2));
     }
     function decodeFloat16(binary) {
-      var exponent = (binary & 31744) >> 10, fraction = binary & 1023;
-      return (binary >> 15 ? -1 : 1) * (exponent ? exponent === 31 ? fraction ? NaN : Infinity : Math.pow(2, exponent - 15) * (1 + fraction / 1024) : 6103515625e-14 * (fraction / 1024));
+      var exponent = (binary & 31744) >> 10,
+        fraction = binary & 1023;
+      return (
+        (binary >> 15 ? -1 : 1) *
+        (exponent
+          ? exponent === 31
+            ? fraction
+              ? NaN
+              : Infinity
+            : Math.pow(2, exponent - 15) * (1 + fraction / 1024)
+          : 6103515625e-14 * (fraction / 1024))
+      );
     }
     function parseUint16(dataView, offset2) {
       var Uint16 = dataView.getUint16(offset2.value, true);
@@ -1418,7 +1586,7 @@ class EXRLoader extends DataTextureLoader {
           pixelType,
           pLinear,
           xSampling,
-          ySampling
+          ySampling,
         });
       }
       offset2.value += 1;
@@ -1441,7 +1609,7 @@ class EXRLoader extends DataTextureLoader {
         blueX,
         blueY,
         whiteX,
-        whiteY
+        whiteY,
       };
     }
     function parseCompression(dataView, offset2) {
@@ -1455,7 +1623,7 @@ class EXRLoader extends DataTextureLoader {
         "B44_COMPRESSION",
         "B44A_COMPRESSION",
         "DWAA_COMPRESSION",
-        "DWAB_COMPRESSION"
+        "DWAB_COMPRESSION",
       ];
       var compression = parseUint8(dataView, offset2);
       return compressionCodes[compression];
@@ -1527,7 +1695,7 @@ class EXRLoader extends DataTextureLoader {
         singleTile: !!(spec & 2),
         longName: !!(spec & 4),
         deepFormat: !!(spec & 8),
-        multiPart: !!(spec & 16)
+        multiPart: !!(spec & 16),
       };
       offset2.value = 8;
       var keepReading = true;
@@ -1540,7 +1708,9 @@ class EXRLoader extends DataTextureLoader {
           var attributeSize = parseUint32(dataView, offset2);
           var attributeValue = parseValue(dataView, buffer2, offset2, attributeType, attributeSize);
           if (attributeValue === void 0) {
-            console.warn(`EXRLoader.parse: skipped unknown header attribute type '${attributeType}'.`);
+            console.warn(
+              `EXRLoader.parse: skipped unknown header attribute type '${attributeType}'.`,
+            );
           } else {
             EXRHeader2[attributeName] = attributeValue;
           }
@@ -1568,7 +1738,7 @@ class EXRLoader extends DataTextureLoader {
         uncompress: null,
         getter: null,
         format: null,
-        [hasColorSpace ? "colorSpace" : "encoding"]: null
+        [hasColorSpace ? "colorSpace" : "encoding"]: null,
       };
       switch (EXRHeader2.compression) {
         case "NO_COMPRESSION":
@@ -1629,11 +1799,16 @@ class EXRLoader extends DataTextureLoader {
             EXRDecoder2.inputSize = FLOAT32_SIZE;
         }
       } else {
-        throw "EXRLoader.parse: unsupported pixelType " + EXRDecoder2.type + " for " + EXRHeader2.compression + ".";
+        throw (
+          "EXRLoader.parse: unsupported pixelType " +
+          EXRDecoder2.type +
+          " for " +
+          EXRHeader2.compression +
+          "."
+        );
       }
       EXRDecoder2.blockCount = (EXRHeader2.dataWindow.yMax + 1) / EXRDecoder2.scanlineBlockSize;
-      for (var i = 0; i < EXRDecoder2.blockCount; i++)
-        parseInt64(dataView, offset2);
+      for (var i = 0; i < EXRDecoder2.blockCount; i++) parseInt64(dataView, offset2);
       EXRDecoder2.outputChannels = EXRDecoder2.channels == 3 ? 4 : EXRDecoder2.channels;
       const size = EXRDecoder2.width * EXRDecoder2.height * EXRDecoder2.outputChannels;
       switch (outputType) {
@@ -1652,14 +1827,10 @@ class EXRLoader extends DataTextureLoader {
           break;
       }
       EXRDecoder2.bytesPerLine = EXRDecoder2.width * EXRDecoder2.inputSize * EXRDecoder2.channels;
-      if (EXRDecoder2.outputChannels == 4)
-        EXRDecoder2.format = RGBAFormat;
-      else
-        EXRDecoder2.format = RedFormat;
-      if (hasColorSpace)
-        EXRDecoder2.colorSpace = "srgb-linear";
-      else
-        EXRDecoder2.encoding = 3e3;
+      if (EXRDecoder2.outputChannels == 4) EXRDecoder2.format = RGBAFormat;
+      else EXRDecoder2.format = RedFormat;
+      if (hasColorSpace) EXRDecoder2.colorSpace = "srgb-linear";
+      else EXRDecoder2.encoding = 3e3;
       return EXRDecoder2;
     }
     const bufferDataView = new DataView(buffer);
@@ -1669,22 +1840,35 @@ class EXRLoader extends DataTextureLoader {
     const EXRDecoder = setupDecoder(EXRHeader, bufferDataView, uInt8Array, offset, this.type);
     const tmpOffset = { value: 0 };
     const channelOffsets = { R: 0, G: 1, B: 2, A: 3, Y: 0 };
-    for (let scanlineBlockIdx = 0; scanlineBlockIdx < EXRDecoder.height / EXRDecoder.scanlineBlockSize; scanlineBlockIdx++) {
+    for (
+      let scanlineBlockIdx = 0;
+      scanlineBlockIdx < EXRDecoder.height / EXRDecoder.scanlineBlockSize;
+      scanlineBlockIdx++
+    ) {
       const line = parseUint32(bufferDataView, offset);
       EXRDecoder.size = parseUint32(bufferDataView, offset);
-      EXRDecoder.lines = line + EXRDecoder.scanlineBlockSize > EXRDecoder.height ? EXRDecoder.height - line : EXRDecoder.scanlineBlockSize;
+      EXRDecoder.lines =
+        line + EXRDecoder.scanlineBlockSize > EXRDecoder.height
+          ? EXRDecoder.height - line
+          : EXRDecoder.scanlineBlockSize;
       const isCompressed = EXRDecoder.size < EXRDecoder.lines * EXRDecoder.bytesPerLine;
       const viewer = isCompressed ? EXRDecoder.uncompress(EXRDecoder) : uncompressRAW(EXRDecoder);
       offset.value += EXRDecoder.size;
       for (let line_y = 0; line_y < EXRDecoder.scanlineBlockSize; line_y++) {
         const true_y = line_y + scanlineBlockIdx * EXRDecoder.scanlineBlockSize;
-        if (true_y >= EXRDecoder.height)
-          break;
+        if (true_y >= EXRDecoder.height) break;
         for (let channelID = 0; channelID < EXRDecoder.channels; channelID++) {
           const cOff = channelOffsets[EXRHeader.channels[channelID].name];
           for (let x = 0; x < EXRDecoder.width; x++) {
-            tmpOffset.value = (line_y * (EXRDecoder.channels * EXRDecoder.width) + channelID * EXRDecoder.width + x) * EXRDecoder.inputSize;
-            const outIndex = (EXRDecoder.height - 1 - true_y) * (EXRDecoder.width * EXRDecoder.outputChannels) + x * EXRDecoder.outputChannels + cOff;
+            tmpOffset.value =
+              (line_y * (EXRDecoder.channels * EXRDecoder.width) +
+                channelID * EXRDecoder.width +
+                x) *
+              EXRDecoder.inputSize;
+            const outIndex =
+              (EXRDecoder.height - 1 - true_y) * (EXRDecoder.width * EXRDecoder.outputChannels) +
+              x * EXRDecoder.outputChannels +
+              cOff;
             EXRDecoder.byteArray[outIndex] = EXRDecoder.getter(viewer, tmpOffset);
           }
         }
@@ -1696,8 +1880,9 @@ class EXRLoader extends DataTextureLoader {
       height: EXRDecoder.height,
       data: EXRDecoder.byteArray,
       format: EXRDecoder.format,
-      [hasColorSpace ? "colorSpace" : "encoding"]: EXRDecoder[hasColorSpace ? "colorSpace" : "encoding"],
-      type: this.type
+      [hasColorSpace ? "colorSpace" : "encoding"]:
+        EXRDecoder[hasColorSpace ? "colorSpace" : "encoding"],
+      type: this.type,
     };
   }
   setDataType(value) {
@@ -1706,16 +1891,13 @@ class EXRLoader extends DataTextureLoader {
   }
   load(url, onLoad, onProgress, onError) {
     function onLoadCallback(texture, texData) {
-      if (hasColorSpace)
-        texture.colorSpace = texData.colorSpace;
-      else
-        texture.encoding = texData.encoding;
+      if (hasColorSpace) texture.colorSpace = texData.colorSpace;
+      else texture.encoding = texData.encoding;
       texture.minFilter = LinearFilter;
       texture.magFilter = LinearFilter;
       texture.generateMipmaps = false;
       texture.flipY = false;
-      if (onLoad)
-        onLoad(texture, texData);
+      if (onLoad) onLoad(texture, texData);
     }
     return super.load(url, onLoadCallback, onProgress, onError);
   }
@@ -1727,7 +1909,9 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
     super();
     this.isLineSegmentsGeometry = true;
     this.type = "LineSegmentsGeometry";
-    const positions = [-1, 2, 0, 1, 2, 0, -1, 1, 0, 1, 1, 0, -1, 0, 0, 1, 0, 0, -1, -1, 0, 1, -1, 0];
+    const positions = [
+      -1, 2, 0, 1, 2, 0, -1, 1, 0, 1, 1, 0, -1, 0, 0, 1, 0, 0, -1, -1, 0, 1, -1, 0,
+    ];
     const uvs = [-1, 2, 1, 2, -1, 1, 1, 1, -1, -1, 1, -1, -1, -2, 1, -2];
     const index = [0, 2, 1, 2, 3, 1, 2, 4, 3, 4, 5, 3, 4, 6, 5, 6, 7, 5];
     this.setIndex(index);
@@ -1772,8 +1956,14 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
       colors = new Float32Array(array);
     }
     const instanceColorBuffer = new InstancedInterleavedBuffer(colors, itemSize * 2, 1);
-    this.setAttribute("instanceColorStart", new InterleavedBufferAttribute(instanceColorBuffer, itemSize, 0));
-    this.setAttribute("instanceColorEnd", new InterleavedBufferAttribute(instanceColorBuffer, itemSize, itemSize));
+    this.setAttribute(
+      "instanceColorStart",
+      new InterleavedBufferAttribute(instanceColorBuffer, itemSize, 0),
+    );
+    this.setAttribute(
+      "instanceColorEnd",
+      new InterleavedBufferAttribute(instanceColorBuffer, itemSize, itemSize),
+    );
     return this;
   }
   fromWireframeGeometry(geometry) {
@@ -1828,13 +2018,12 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
       if (isNaN(this.boundingSphere.radius)) {
         console.error(
           "THREE.LineSegmentsGeometry.computeBoundingSphere(): Computed radius is NaN. The instanced position data is likely to have NaN values.",
-          this
+          this,
         );
       }
     }
   }
-  toJSON() {
-  }
+  toJSON() {}
   applyMatrix(matrix) {
     console.warn("THREE.LineSegmentsGeometry: applyMatrix() has been renamed to applyMatrix4().");
     return this.applyMatrix4(matrix);
@@ -1908,12 +2097,12 @@ class LineMaterial extends ShaderMaterial {
             dashOffset: { value: 0 },
             dashScale: { value: 1 },
             dashSize: { value: 1 },
-            gapSize: { value: 1 }
+            gapSize: { value: 1 },
             // todo FIX - maybe change to totalSize
-          }
-        ])
+          },
+        ]),
       ),
-      vertexShader: (
+      vertexShader:
         /* glsl */
         `
 				#include <common>
@@ -2151,9 +2340,8 @@ class LineMaterial extends ShaderMaterial {
 					#include <fog_vertex>
 
 				}
-			`
-      ),
-      fragmentShader: (
+			`,
+      fragmentShader:
         /* glsl */
         `
 				uniform vec3 diffuse;
@@ -2327,13 +2515,12 @@ class LineMaterial extends ShaderMaterial {
 					#include <premultiplied_alpha_fragment>
 
 				}
-			`
-      ),
-      clipping: true
+			`,
+      clipping: true,
       // required for clipping support
     });
     this.isLineMaterial = true;
-    this.onBeforeCompile = function() {
+    this.onBeforeCompile = function () {
       if (this.transparent) {
         this.defines.USE_LINE_COLOR_ALPHA = "1";
       } else {
@@ -2343,38 +2530,38 @@ class LineMaterial extends ShaderMaterial {
     Object.defineProperties(this, {
       color: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return this.uniforms.diffuse.value;
         },
-        set: function(value) {
+        set: function (value) {
           this.uniforms.diffuse.value = value;
-        }
+        },
       },
       worldUnits: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return "WORLD_UNITS" in this.defines;
         },
-        set: function(value) {
+        set: function (value) {
           if (value === true) {
             this.defines.WORLD_UNITS = "";
           } else {
             delete this.defines.WORLD_UNITS;
           }
-        }
+        },
       },
       linewidth: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return this.uniforms.linewidth.value;
         },
-        set: function(value) {
+        set: function (value) {
           this.uniforms.linewidth.value = value;
-        }
+        },
       },
       dashed: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return Boolean("USE_DASH" in this.defines);
         },
         set(value) {
@@ -2386,68 +2573,68 @@ class LineMaterial extends ShaderMaterial {
           } else {
             delete this.defines.USE_DASH;
           }
-        }
+        },
       },
       dashScale: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return this.uniforms.dashScale.value;
         },
-        set: function(value) {
+        set: function (value) {
           this.uniforms.dashScale.value = value;
-        }
+        },
       },
       dashSize: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return this.uniforms.dashSize.value;
         },
-        set: function(value) {
+        set: function (value) {
           this.uniforms.dashSize.value = value;
-        }
+        },
       },
       dashOffset: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return this.uniforms.dashOffset.value;
         },
-        set: function(value) {
+        set: function (value) {
           this.uniforms.dashOffset.value = value;
-        }
+        },
       },
       gapSize: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return this.uniforms.gapSize.value;
         },
-        set: function(value) {
+        set: function (value) {
           this.uniforms.gapSize.value = value;
-        }
+        },
       },
       opacity: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return this.uniforms.opacity.value;
         },
-        set: function(value) {
+        set: function (value) {
           this.uniforms.opacity.value = value;
-        }
+        },
       },
       resolution: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return this.uniforms.resolution.value;
         },
-        set: function(value) {
+        set: function (value) {
           this.uniforms.resolution.value.copy(value);
-        }
+        },
       },
       alphaToCoverage: {
         enumerable: true,
-        get: function() {
+        get: function () {
           return Boolean("USE_ALPHA_TO_COVERAGE" in this.defines);
         },
-        set: function(value) {
+        set: function (value) {
           if (Boolean(value) !== Boolean("USE_ALPHA_TO_COVERAGE" in this.defines)) {
             this.needsUpdate = true;
           }
@@ -2458,8 +2645,8 @@ class LineMaterial extends ShaderMaterial {
             delete this.defines.USE_ALPHA_TO_COVERAGE;
             this.extensions.derivatives = false;
           }
-        }
-      }
+        },
+      },
     });
     this.setValues(parameters);
   }
@@ -2510,7 +2697,7 @@ function raycastWorldUnits(lineSegments, intersects) {
         face: null,
         faceIndex: i,
         uv: null,
-        [UV1]: null
+        [UV1]: null,
       });
     }
   }
@@ -2588,13 +2775,16 @@ function raycastScreenSpace(lineSegments, camera, intersects) {
         face: null,
         faceIndex: i,
         uv: null,
-        [UV1]: null
+        [UV1]: null,
       });
     }
   }
 }
 class LineSegments2 extends Mesh {
-  constructor(geometry = new LineSegmentsGeometry(), material = new LineMaterial({ color: Math.random() * 16777215 })) {
+  constructor(
+    geometry = new LineSegmentsGeometry(),
+    material = new LineMaterial({ color: Math.random() * 16777215 }),
+  ) {
     super(geometry, material);
     this.isLineSegments2 = true;
     this.type = "LineSegments2";
@@ -2612,8 +2802,14 @@ class LineSegments2 extends Mesh {
       lineDistances[j + 1] = lineDistances[j] + _start.distanceTo(_end);
     }
     const instanceDistanceBuffer = new InstancedInterleavedBuffer(lineDistances, 2, 1);
-    geometry.setAttribute("instanceDistanceStart", new InterleavedBufferAttribute(instanceDistanceBuffer, 1, 0));
-    geometry.setAttribute("instanceDistanceEnd", new InterleavedBufferAttribute(instanceDistanceBuffer, 1, 1));
+    geometry.setAttribute(
+      "instanceDistanceStart",
+      new InterleavedBufferAttribute(instanceDistanceBuffer, 1, 0),
+    );
+    geometry.setAttribute(
+      "instanceDistanceEnd",
+      new InterleavedBufferAttribute(instanceDistanceBuffer, 1, 1),
+    );
     return this;
   }
   raycast(raycaster, intersects) {
@@ -2621,7 +2817,7 @@ class LineSegments2 extends Mesh {
     const camera = raycaster.camera;
     if (camera === null && !worldUnits) {
       console.error(
-        'LineSegments2: "Raycaster.camera" needs to be set in order to raycast against LineSegments2 while worldUnits is set to false.'
+        'LineSegments2: "Raycaster.camera" needs to be set in order to raycast against LineSegments2 while worldUnits is set to false.',
       );
     }
     const threshold = raycaster.params.Line2 !== void 0 ? raycaster.params.Line2.threshold || 0 : 0;
@@ -2675,7 +2871,10 @@ class LineSegments2 extends Mesh {
   }
 }
 class Line2 extends LineSegments2 {
-  constructor(geometry = new LineGeometry(), material = new LineMaterial({ color: Math.random() * 16777215 })) {
+  constructor(
+    geometry = new LineGeometry(),
+    material = new LineMaterial({ color: Math.random() * 16777215 }),
+  ) {
     super(geometry, material);
     this.isLine2 = true;
     this.type = "Line2";
@@ -2689,5 +2888,5 @@ export {
   Line2 as a,
   LineMaterial as b,
   LineSegmentsGeometry as c,
-  LineGeometry as d
+  LineGeometry as d,
 };

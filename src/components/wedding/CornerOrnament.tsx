@@ -9,18 +9,8 @@ export function CornerOrnament({
 }) {
   const transform = `${flipX ? "scaleX(-1) " : ""}${flipY ? "scaleY(-1)" : ""}`;
   return (
-    <svg
-      viewBox="0 0 120 120"
-      className={className}
-      style={{ transform }}
-      aria-hidden
-    >
-      <g
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      >
+    <svg viewBox="0 0 120 120" className={className} style={{ transform }} aria-hidden>
+      <g fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round">
         <path d="M5 5 C 45 10, 70 35, 75 75" />
         <path d="M5 5 C 25 25, 45 35, 65 45" opacity="0.6" />
         <circle cx="78" cy="78" r="3" fill="currentColor" />
