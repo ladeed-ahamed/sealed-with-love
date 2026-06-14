@@ -1,11 +1,17 @@
 import { useRef, useState } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Text, Line } from "@react-three/drei";
 
 export function DrawnEnvelope({ onClick }: { onClick?: () => void }) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
+  const { viewport } = useThree();
+
+  // Dynamically calculate responsive scale multiplier for the envelope
+  const scaleMultiplier = viewport.width < 4.5 ? (viewport.width / 4.5) * 0.95 : 1.0;
+  const baseScale = scaleMultiplier;
+  const activeScale = hovered ? baseScale * 1.08 : baseScale;
 
   // Simple floating animation
   useFrame((state) => {
@@ -21,7 +27,7 @@ export function DrawnEnvelope({ onClick }: { onClick?: () => void }) {
       onClick={onClick}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
-      scale={hovered ? 1.1 : 1}
+      scale={activeScale}
       // Add cursor pointer style when hovering
       onPointerEnter={() => { document.body.style.cursor = 'pointer'; setHovered(true); }}
       onPointerLeave={() => { document.body.style.cursor = 'auto'; setHovered(false); }}
