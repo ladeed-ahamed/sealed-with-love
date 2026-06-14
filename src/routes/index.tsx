@@ -1,324 +1,203 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect, Suspense, ReactNode } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Environment } from "@react-three/drei";
+import { motion, AnimatePresence } from "framer-motion";
+
 import { wedding } from "@/lib/wedding-data";
-import { FloatingParticles } from "@/components/wedding/FloatingParticles";
-import { CornerOrnament } from "@/components/wedding/CornerOrnament";
-import { Envelope } from "@/components/wedding/Envelope";
-import { Countdown } from "@/components/wedding/Countdown";
-import { Reveal, Divider } from "@/components/wedding/Reveal";
+import { DrawnEnvelope } from "@/components/wedding/DrawnEnvelope";
+import { DialogueBox } from "@/components/wedding/DialogueBox";
+import { DrawnCountdown } from "@/components/wedding/DrawnCountdown";
 import { MusicPlayer } from "@/components/wedding/MusicPlayer";
-import { ScratchToReveal } from "@/components/wedding/ScratchToReveal";
+import { RetroCoupleCard } from "@/components/wedding/RetroCoupleCard";
+import { RetroEventCard } from "@/components/wedding/RetroEventCard";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: `${wedding.groom.firstName} & ${wedding.bride.firstName} — Wedding Invitation` },
-      { name: "description", content: wedding.body },
-      { property: "og:title", content: `${wedding.groom.firstName} & ${wedding.bride.firstName}` },
-      { property: "og:description", content: wedding.body },
-    ],
-  }),
   component: Index,
 });
 
-const galleryImages = [
-  "https://images.unsplash.com/photo-1519741497674-611481863552?w=900&q=80",
-  "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=900&q=80",
-  "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=900&q=80",
-  "https://images.unsplash.com/photo-1525772764200-be829a350797?w=900&q=80",
-  "https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=900&q=80",
-  "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=900&q=80",
+// Create a sequence of dialogue messages from the wedding data
+interface StoryChapter {
+  speaker: string;
+  text?: string;
+  component?: ReactNode;
+}
+
+const storySequence: StoryChapter[] = [
+  { speaker: "MESSENGER", text: wedding.openingLine },
+  { speaker: "INVITATION", text: wedding.body },
+  { 
+    speaker: "THE COUPLE", 
+    text: `Introducing the Groom & Bride: ${wedding.groom.firstName} & ${wedding.bride.firstName}`,
+    component: <RetroCoupleCard /> 
+  },
+  { speaker: wedding.groom.firstName.toUpperCase() + " & " + wedding.bride.firstName.toUpperCase(), text: `Please join us for our ${wedding.event.label}` },
+  { 
+    speaker: "THE CEREMONY", 
+    text: `Join us at ${wedding.event.venue} for the celebration.`,
+    component: <RetroEventCard /> 
+  },
+  {
+    speaker: "COUNTDOWN",
+    text: "Time left until the big day:",
+    component: <DrawnCountdown targetDateIso={wedding.event.iso} />
+  },
+  { speaker: "BLESSING", text: wedding.closingBlessing },
+  { speaker: "FAREWELL", text: `We can't wait to see you there!\n\n${wedding.closingScript}` }
 ];
 
+function LoaderNotifier({ onLoaded }: { onLoaded: () => void }) {
+  useEffect(() => {
+    onLoaded();
+  }, [onLoaded]);
+  return null;
+}
+
 function Index() {
-  const [opened, setOpened] = useState(false);
+  const [gameState, setGameState] = useState<"loading" | "reading" | "finished">("loading");
+  const [currentDialogueIdx, setCurrentDialogueIdx] = useState(0);
+  const [errorText, setErrorText] = useState<string | null>(null);
+  const [canvasLoaded, setCanvasLoaded] = useState(false);
+  const hasComponent = !!storySequence[currentDialogueIdx].component;
+
+  useEffect(() => {
+    const handleErr = (e: ErrorEvent) => {
+      setErrorText(e.message + "\n" + (e.error?.stack || ""));
+    };
+    const handleRej = (e: PromiseRejectionEvent) => {
+      setErrorText((e.reason?.message || String(e.reason)) + "\n" + (e.reason?.stack || ""));
+    };
+    window.addEventListener("error", handleErr);
+    window.addEventListener("unhandledrejection", handleRej);
+    return () => {
+      window.removeEventListener("error", handleErr);
+      window.removeEventListener("unhandledrejection", handleRej);
+    };
+  }, []);
+
+  const handleNextDialogue = () => {
+    if (currentDialogueIdx < storySequence.length - 1) {
+      setCurrentDialogueIdx(prev => prev + 1);
+    } else {
+      setGameState("finished");
+    }
+  };
+
+  if (errorText) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-white p-6 overflow-auto text-red-600 font-mono pointer-events-auto">
+        <h2 className="text-xl font-bold mb-4">React App Error Detected:</h2>
+        <pre className="whitespace-pre-wrap">{errorText}</pre>
+        <button 
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded font-sans cursor-pointer"
+          onClick={() => {
+            setErrorText(null);
+            window.location.reload();
+          }}
+        >
+          Reload Page
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden text-ink">
-      <FloatingParticles count={40} />
+    <div className="relative min-h-[100dvh] w-full overflow-hidden bg-transparent">
       <MusicPlayer />
 
-      <AnimatePresence mode="wait">
-        {!opened ? (
-          <motion.section
-            key="envelope"
-            className="relative z-10 flex min-h-screen flex-col items-center justify-center px-5 py-12"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <CornerOrnament className="pointer-events-none absolute left-4 top-4 h-24 w-24 text-rosegold/60 sm:h-32 sm:w-32" />
-            <CornerOrnament className="pointer-events-none absolute right-4 top-4 h-24 w-24 text-rosegold/60 sm:h-32 sm:w-32" flipX />
-            <CornerOrnament className="pointer-events-none absolute bottom-4 left-4 h-24 w-24 text-rosegold/60 sm:h-32 sm:w-32" flipY />
-            <CornerOrnament className="pointer-events-none absolute bottom-4 right-4 h-24 w-24 text-rosegold/60 sm:h-32 sm:w-32" flipX flipY />
+      {/* Sketchy Loading Overlay */}
+      {gameState === "loading" && !canvasLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background z-20 pointer-events-none">
+          <div className="text-center p-8">
+            <h2 className="font-pixel text-4xl text-ink uppercase animate-pulse">Loading Invitation...</h2>
+            <p className="font-dialogue text-2xl mt-4">Opening the gates of love...</p>
+          </div>
+        </div>
+      )}
 
-            <motion.div
-              className="mb-10 max-w-xl text-center"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
-            >
-              <p className="font-label text-[10px] tracking-[0.35em] text-rosegold sm:text-xs">
-                YOU ARE CORDIALLY INVITED TO WITNESS
-              </p>
-              <h1 className="mt-3 font-display text-2xl font-medium italic text-ink sm:text-3xl">
-                The Celebration of Love &amp; Togetherness
-              </h1>
-            </motion.div>
+      {/* 3D WebGL Background & Interactive Elements */}
+      <div 
+        className={`absolute inset-0 z-0 transition-opacity duration-1000 ${
+          gameState === "loading" ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+          <ambientLight intensity={1.5} />
+          <directionalLight position={[10, 10, 5]} intensity={1} />
+          
+          <Suspense fallback={null}>
+            <DrawnEnvelope onClick={() => setTimeout(() => setGameState("reading"), 100)} />
+            <Environment preset="city" />
+            <LoaderNotifier onLoaded={() => setCanvasLoaded(true)} />
+          </Suspense>
+        </Canvas>
+      </div>
 
-            <Envelope onOpen={() => setOpened(true)} />
-          </motion.section>
-        ) : (
-          <motion.main
-            key="invitation"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 mx-auto w-full max-w-lg px-4 py-12 sm:max-w-2xl"
-          >
-            {/* THE ARCH CONTAINER */}
-            <div className="relative overflow-hidden rounded-t-[12rem] border border-rosegold/50 bg-parchment-deep/10 px-6 py-20 pb-24 text-center shadow-sm">
-              {/* Inner Arch Line */}
-              <div className="pointer-events-none absolute bottom-3 left-3 right-3 top-3 rounded-t-[11.5rem] border border-rosegold/30" />
-
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: {},
-                  visible: { transition: { staggerChildren: 0.25, delayChildren: 0.2 } },
-                }}
-                className="relative z-10 flex flex-col items-center gap-8"
-              >
-                {[
-                  <p key="a" className="w-full text-center font-arabic text-3xl text-rosegold" dir="rtl">
-                    {wedding.openingLine}
-                  </p>,
-                  <p key="b" className="mt-4 font-label text-[9px] uppercase leading-relaxed tracking-[0.25em] text-ink-muted sm:text-[10px]">
-                    WITH JOY IN OUR HEARTS, WE REQUEST THE<br />
-                    HONOUR OF YOUR PRESENCE AT THE<br />
-                    {wedding.event.culturalName.toUpperCase()} OF:
-                  </p>,
-                  <div key="c" className="mt-6 text-center">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="mx-auto mb-6 text-rosegold/40">
-                      <path d="M12 21s-7.5-4.6-9.5-9.4C1 7.9 3.7 4 7.6 4c2 0 3.4 1.1 4.4 2.6C13 5.1 14.4 4 16.4 4 20.3 4 23 7.9 21.5 11.6 19.5 16.4 12 21 12 21z" />
-                    </svg>
-                    <h2 className="font-display text-4xl font-bold italic text-ink sm:text-5xl">{wedding.groom.name}</h2>
-
-                    <p className="my-6 font-script text-3xl text-rosegold sm:text-4xl">&amp;</p>
-
-                    <h2 className="font-display text-4xl font-bold italic text-ink sm:text-5xl">{wedding.bride.name}</h2>
-                  </div>,
-                  <p key="d" className="mt-8 font-label text-[9px] uppercase tracking-[0.3em] text-ink-muted">
-                    TOGETHER WITH THEIR FAMILIES
-                  </p>,
-                  <svg key="h2" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="mt-2 text-rosegold/40">
-                    <path d="M12 21s-7.5-4.6-9.5-9.4C1 7.9 3.7 4 7.6 4c2 0 3.4 1.1 4.4 2.6C13 5.1 14.4 4 16.4 4 20.3 4 23 7.9 21.5 11.6 19.5 16.4 12 21 12 21z" />
-                  </svg>,
-                  <div key="e" className="mt-4 flex flex-col gap-8 text-center">
-                    <div className="mx-auto max-w-xs px-4">
-                      <p className="font-body text-xs leading-relaxed text-ink sm:text-sm">{wedding.groom.subtitle}</p>
-                      <p className="mt-2 font-label text-[8px] tracking-[0.2em] text-rosegold">GROOM'S PARENTS</p>
-                    </div>
-                    <div className="mx-auto max-w-xs px-4">
-                      <p className="font-body text-xs leading-relaxed text-ink sm:text-sm">{wedding.bride.subtitle}</p>
-                      <p className="mt-2 font-label text-[8px] tracking-[0.2em] text-rosegold">BRIDE'S PARENTS</p>
-                    </div>
-                  </div>
-                ].map((node, i) => (
-                  <motion.div
-                    key={i}
-                    variants={{
-                      hidden: { opacity: 0, y: 16 },
-                      visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } },
-                    }}
-                  >
-                    {node}
-                  </motion.div>
-                ))}
-              </motion.div>
-
-            {/* SECTION 2 — COUNTDOWN */}
-        <section className="px-5 py-20">
-          <div className="mx-auto max-w-3xl text-center">
-            <Reveal>
-              <p className="font-label text-[10px] tracking-[0.35em] text-rosegold sm:text-xs">
-                COUNTING THE MOMENTS
-              </p>
-              <h3 className="mt-3 font-display text-3xl italic sm:text-4xl">Until We Begin Forever</h3>
-              <Divider className="mt-6" />
-            </Reveal>
-            <Reveal delay={0.2}>
-              <div className="mt-10">
-                <Countdown iso={wedding.event.iso} />
+      {/* 2D HTML UI Overlay */}
+      {gameState !== "loading" && (
+        <div className="fixed inset-0 z-50 pointer-events-none">
+          {gameState === "reading" && (
+            <>
+              {/* Center Screen Illustration Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center p-4 pb-[220px] md:pb-4">
+                <AnimatePresence mode="wait">
+                  {storySequence[currentDialogueIdx].component && (
+                    <motion.div
+                      key={`illustration-${currentDialogueIdx}`}
+                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                      transition={{ duration: 0.4 }}
+                      className="w-full flex justify-center pointer-events-auto"
+                    >
+                      {storySequence[currentDialogueIdx].component}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </Reveal>
-          </div>
-        </section>
 
-        {/* SECTION 3 — INVITATION MESSAGE */}
-        <section className="px-5 py-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <Reveal>
-              <p className="font-display text-xl italic leading-relaxed text-ink sm:text-2xl">
-                {wedding.body}
-              </p>
-              <p className="mt-6 font-display text-xs italic text-ink-muted sm:text-sm">
-                With prayers &amp; gratitude
-              </p>
-              <Divider className="mx-auto mt-12 max-w-xs" />
-            </Reveal>
-          </div>
-        </section>
-
-        {/* SECTION 4 — WEDDING DETAILS */}
-        <section className="px-5 py-20">
-          <div className="mx-auto max-w-2xl">
-            <Reveal>
-              <motion.div
-                whileHover={{ y: -4, boxShadow: "0 40px 80px -30px rgba(0,0,0,0.25)" }}
+              {/* Dialogue Box */}
+              <motion.div 
+                key={hasComponent ? "dialogue-bottom" : `dialogue-center-${currentDialogueIdx}`}
+                initial={{ opacity: 0, y: hasComponent ? 30 : 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: hasComponent ? 30 : -10 }}
                 transition={{ duration: 0.3 }}
-                className="parchment-card shimmer rounded-lg px-6 py-10 text-center sm:px-12 sm:py-14"
+                className={
+                  hasComponent 
+                    ? "absolute bottom-10 left-4 right-4 md:left-10 md:right-10 pointer-events-auto z-20"
+                    : "absolute inset-0 flex items-center justify-center p-4 pointer-events-auto z-20"
+                }
               >
-                <CornerOrnament className="pointer-events-none absolute left-2 top-2 h-14 w-14 text-rosegold/60" />
-                <CornerOrnament className="pointer-events-none absolute right-2 top-2 h-14 w-14 text-rosegold/60" flipX />
-                <CornerOrnament className="pointer-events-none absolute bottom-2 left-2 h-14 w-14 text-rosegold/60" flipY />
-                <CornerOrnament className="pointer-events-none absolute bottom-2 right-2 h-14 w-14 text-rosegold/60" flipX flipY />
-                <ScratchToReveal>
-                  <h3 className="mt-3 font-script text-4xl text-ink sm:text-5xl">
-                    {wedding.event.culturalName}
-                  </h3>
-                  <Divider className="my-6" />
-
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <p className="font-label text-[10px] tracking-widest text-rosegold">DATE</p>
-                    <p className="mt-1 font-display text-lg sm:text-xl">{wedding.event.date}</p>
-                    <p className="font-body text-xs italic text-ink-muted">{wedding.event.secondaryDate}</p>
-                  </div>
-                  <div>
-                    <p className="font-label text-[10px] tracking-widest text-rosegold">TIME</p>
-                    <p className="mt-1 font-display text-lg sm:text-xl">{wedding.event.time}</p>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <p className="font-label text-[10px] tracking-widest text-rosegold">VENUE</p>
-                    <p className="mt-1 font-display text-lg sm:text-xl">{wedding.event.venue}</p>
-                    <p className="font-body text-sm text-ink-muted">{wedding.event.address}</p>
-                  </div>
-                </div>
-
-                  <a
-                    href={wedding.event.maps}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-8 inline-flex items-center gap-2 rounded-sm border border-rosegold/60 bg-rosegold/10 px-6 py-3 font-label text-[11px] tracking-[0.25em] text-ink transition-all duration-300 hover:-translate-y-0.5 hover:bg-rosegold hover:text-primary-foreground"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 22s8-7 8-13a8 8 0 10-16 0c0 6 8 13 8 13z" />
-                      <circle cx="12" cy="9" r="3" />
-                    </svg>
-                    OPEN MAPS
-                  </a>
-                </ScratchToReveal>
+                <DialogueBox 
+                  speaker={storySequence[currentDialogueIdx].speaker}
+                  text={storySequence[currentDialogueIdx].text}
+                  onNext={handleNextDialogue}
+                />
               </motion.div>
-            </Reveal>
-          </div>
-        </section>
+            </>
+          )}
 
-        {/* We can hide SECTION 5 entirely since family is now in the Hero Arch */}
-
-        {/* SECTION 6 — GALLERY */}
-        {/* <section className="px-5 py-20">
-              <div className="mx-auto max-w-6xl">
-                <Reveal>
-                  <div className="text-center">
-                    <p className="font-label text-[10px] tracking-[0.35em] text-rosegold sm:text-xs">
-                      MOMENTS WE TREASURE
-                    </p>
-                    <h3 className="mt-3 font-display text-3xl italic sm:text-4xl">A Glimpse of Our Story</h3>
-                    <Divider className="mt-6" />
-                  </div>
-                </Reveal>
-
-                <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {galleryImages.map((src, i) => (
-                    <Reveal key={src} delay={(i % 3) * 0.1}>
-                      <motion.div
-                        whileHover={{ y: -4 }}
-                        transition={{ duration: 0.3 }}
-                        className="parchment-card overflow-hidden rounded-md p-2"
-                      >
-                        <div className="overflow-hidden rounded-sm">
-                          <img
-                            src={src}
-                            alt="Wedding moment"
-                            loading="lazy"
-                            className="aspect-[4/5] w-full object-cover transition-transform duration-700 hover:scale-105"
-                            style={{ filter: "sepia(0.08) saturate(0.95)" }}
-                          />
-                        </div>
-                      </motion.div>
-                    </Reveal>
-                  ))}
-                </div>
+          {gameState === "finished" && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-auto">
+              <div className="drawn-card p-10 flex flex-col gap-6 items-center">
+                <h2 className="font-pixel text-4xl text-blue-accent uppercase">End of Chapter</h2>
+                <p className="font-dialogue text-2xl">{wedding.footerTagline}</p>
+                <button 
+                  className="name-tag mt-4 hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                  onClick={() => {
+                    setCurrentDialogueIdx(0);
+                    setCanvasLoaded(false); // Reset canvas loader
+                    setGameState("loading");
+                  }}
+                >
+                  REPLAY STORY
+                </button>
               </div>
-            </section> */}
-
-        {/* SECTION 7 — BLESSING */}
-        <section className="px-5 py-24">
-          <div className="mx-auto max-w-2xl text-center">
-            <Reveal>
-              <Divider />
-              <p className="mt-8 font-display text-xl italic leading-relaxed text-ink sm:text-2xl">
-                {wedding.closingBlessing}
-              </p>
-            </Reveal>
-            <Reveal delay={0.25}>
-              <h2 className="mt-12 font-script text-[11vw] leading-none text-rosegold sm:text-7xl">
-                {wedding.closingWord}
-              </h2>
-              <p className="mt-2 font-display italic text-ink-muted">{wedding.closingScript}</p>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* SECTION 8 — FOOTER */}
-        <footer className="px-5 pb-12 pt-6">
-          <div className="mx-auto max-w-3xl text-center">
-            <Divider className="mx-auto mb-6 max-w-[100px]" />
-            <p className="font-label text-[9px] uppercase tracking-[0.3em] text-rosegold sm:text-[10px]">
-              CRAFTED WITH LOVE - RAZEEN &amp; AALIYA<br/>
-              &middot; 2026
-            </p>
-          </div>
-        </footer>
-        
-        {/* End of Arch Container */}
+            </div>
+          )}
         </div>
-
-        {/* Developer credit — WhatsApp only — Outside Arch */}
-        <div className="mt-8 pb-12 flex flex-col items-center gap-3">
-          <p className="font-body text-[10px] text-ink-muted/50 tracking-wider">
-            Digital Invitation Crafted by
-          </p>
-          <a
-            href="https://wa.me/917356488860"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Chat on WhatsApp"
-            className="inline-flex items-center gap-2 rounded-full border border-rosegold/20 bg-rosegold/5 px-4 py-1.5 font-label text-[10px] tracking-widest text-rosegold/60 transition-all hover:border-rosegold/40 hover:bg-rosegold/10 hover:text-rosegold"
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
-              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.554 4.122 1.526 5.854L.057 23.943l6.243-1.437A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.803a9.793 9.793 0 01-5.025-1.385l-.36-.214-3.728.858.896-3.618-.235-.372A9.788 9.788 0 012.197 12C2.197 6.58 6.58 2.197 12 2.197S21.803 6.58 21.803 12 17.42 21.803 12 21.803z" />
-            </svg>
-            +91 73564 88860
-          </a>
-        </div>
-      </motion.main>
-        )}
-    </AnimatePresence>
-    </div >
+      )}
+    </div>
   );
 }

@@ -79,9 +79,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Razeen & Aaliya — A Wedding Invitation" },
+      { title: "Ajab & Amreen — A Wedding Invitation" },
       { name: "description", content: "You are cordially invited to witness the celebration of love and togetherness." },
-      { property: "og:title", content: "Razeen & Aaliya — A Wedding Invitation" },
+      { property: "og:title", content: "Ajab & Amreen — A Wedding Invitation" },
       { property: "og:description", content: "You are cordially invited to witness the celebration of love and togetherness." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;500;600&family=Great+Vibes&family=Amiri:wght@400;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Patrick+Hand&family=VT323&family=Amiri:wght@400;700&display=swap",
       },
     ],
   }),

@@ -1,135 +1,72 @@
 @import "tailwindcss" source(none);
-@source "../src";
 @import "tw-animate-css";
+@source "../src";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-
-  --color-parchment: var(--parchment);
-  --color-parchment-deep: var(--parchment-deep);
-  --color-rosegold: var(--rosegold);
-  --color-rosegold-soft: var(--rosegold-soft);
-  --color-ink: var(--ink);
-  --color-ink-muted: var(--ink-muted);
-  --color-envelope: var(--envelope);
-  --color-wax: var(--wax);
-
-  --font-display: "Cormorant Garamond", serif;
-  --font-body: "Lora", serif;
-  --font-label: "Cinzel", serif;
-  --font-script: "Great Vibes", cursive;
-  --font-arabic: "Amiri", serif;
-
-  --shadow-card: 0 30px 60px -30px color-mix(in oklab, var(--ink) 30%, transparent), 0 10px 20px -10px color-mix(in oklab, var(--ink) 15%, transparent);
-  --shadow-envelope: 0 40px 80px -20px color-mix(in oklab, var(--envelope) 50%, transparent);
+  
+  --font-dialogue: "Patrick Hand", cursive;
+  --font-pixel: "VT323", monospace;
 }
 
 :root {
-  --radius: 0.5rem;
-  --parchment: oklch(0.97 0.02 85); /* Cream background */
-  --parchment-deep: oklch(0.92 0.03 80); /* Slightly darker cream */
-  --rosegold: oklch(0.68 0.14 65); /* Golden brown accent */
-  --rosegold-soft: oklch(0.80 0.08 70); /* Soft gold accent */
-  --ink: oklch(0.32 0.06 50); /* Deep Brown text */
-  --ink-muted: oklch(0.50 0.08 55); /* Muted brown text */
-  --envelope: oklch(0.92 0.03 80); /* Cream envelope */
-  --wax: oklch(0.68 0.14 65); /* Gold wax seal */
-
-  --background: var(--parchment);
-  --foreground: var(--ink);
-  --card: oklch(0.99 0.01 80);
-  --card-foreground: var(--ink);
-  --popover: var(--card);
-  --popover-foreground: var(--ink);
-  --primary: var(--rosegold);
-  --primary-foreground: oklch(0.99 0.01 80);
-  --secondary: var(--parchment-deep);
-  --secondary-foreground: var(--ink);
-  --muted: var(--parchment-deep);
-  --muted-foreground: var(--ink-muted);
-  --accent: var(--rosegold-soft);
-  --accent-foreground: var(--ink);
-  --destructive: oklch(0.55 0.20 25);
-  --destructive-foreground: oklch(0.99 0.01 80);
-  --border: oklch(0.85 0.04 65);
-  --input: oklch(0.85 0.04 65);
-  --ring: var(--rosegold);
+  /* Visual Novel / Drawn Palette */
+  --background: oklch(0.92 0.05 200); /* Very light teal/cyan background */
+  --foreground: oklch(0.1 0 0); /* Dark ink */
+  
+  --ink: oklch(0.1 0 0);
+  --white: oklch(0.99 0 0);
+  --blue-accent: oklch(0.70 0.12 240); /* Light blue for UI accents */
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-body);
-    background-image:
-      radial-gradient(circle at 20% 10%, color-mix(in oklab, var(--rosegold-soft) 18%, transparent), transparent 45%),
-      radial-gradient(circle at 80% 90%, color-mix(in oklab, var(--rosegold-soft) 14%, transparent), transparent 50%),
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.90  0 0 0 0 0.80  0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-dialogue);
+    letter-spacing: 0.05em;
+    /* Sketchy background pattern */
+    background-image: radial-gradient(var(--ink) 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-position: -15px -15px;
+    opacity: 0.95;
   }
-  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: 0.01em; }
 }
 
-@utility font-display { font-family: var(--font-display); }
-@utility font-body { font-family: var(--font-body); }
-@utility font-label { font-family: var(--font-label); letter-spacing: 0.18em; }
-@utility font-script { font-family: var(--font-script); }
-@utility font-arabic { font-family: var(--font-arabic); }
+@utility font-dialogue { font-family: var(--font-dialogue); }
+@utility font-pixel { font-family: var(--font-pixel); }
 
-@utility parchment-card {
-  background: linear-gradient(180deg, var(--card), color-mix(in oklab, var(--card) 95%, black));
-  border: 1px solid color-mix(in oklab, var(--rosegold) 35%, transparent);
-  box-shadow: 0 20px 40px -20px color-mix(in oklab, var(--ink) 15%, transparent);
+@utility drawn-card {
+  background-color: var(--white);
+  border: 4px solid var(--ink);
+  /* Irregular sketchy border radius */
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  box-shadow: 6px 6px 0px var(--ink);
   position: relative;
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 6px;
-    border: 1px solid color-mix(in oklab, var(--rosegold) 20%, transparent);
-    pointer-events: none;
-    border-radius: inherit;
+}
+
+@utility name-tag {
+  background-color: var(--blue-accent);
+  border: 4px solid var(--ink);
+  font-family: var(--font-pixel);
+  text-transform: uppercase;
+  color: var(--white);
+  padding: 4px 16px;
+  /* Slight irregular rotation */
+  transform: rotate(-2deg);
+}
+
+@utility play-btn {
+  background-color: var(--white);
+  border: 4px solid var(--ink);
+  box-shadow: 4px 4px 0px var(--ink);
+  transition: all 0.1s ease;
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px var(--ink);
   }
 }
 
-@utility shimmer {
-  position: relative;
-  overflow: hidden;
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(115deg, transparent 35%, color-mix(in oklab, var(--rosegold-soft) 28%, transparent) 50%, transparent 65%);
-    transform: translateX(-100%);
-    animation: shimmer-sweep 6s ease-in-out infinite;
-    pointer-events: none;
-  }
-}
-
-@keyframes shimmer-sweep {
-  0%, 40% { transform: translateX(-100%); }
-  60%, 100% { transform: translateX(100%); }
-}

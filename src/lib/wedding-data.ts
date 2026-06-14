@@ -2,15 +2,15 @@ export const wedding = {
   hosts: "Together with their families",
 
   groom: {
-    firstName: "Razeen",
-    name: "Mohammed Razeen",
-    subtitle: "S/O Faizal Seethi Marakkarakam & Liza Puthiya Kadiyarakam",
+    firstName: "Ajab",
+    name: "Ajab Mohammed Bava C",
+    subtitle: "S/O Mohammed Arif Cheriyakam & Shameena Cheriya Kolikkal",
   },
 
   bride: {
-    firstName: "Aaliya",
-    name: "Aaliya Mubarak",
-    subtitle: "D/O Mubarak Puthiya Srangintakam & Ameena Aboobacker Pathaya Pura",
+    firstName: "Amreen",
+    name: "Amreen Iskander",
+    subtitle: "D/O Iskander Mamu Cheriye Arakkal & Aneesa",
   },
 
   openingLine: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
@@ -24,34 +24,34 @@ export const wedding = {
   culturalPhrase: "بارك الله لكما وبارك عليكما وجمع بينكما في خير",
 
   event: {
-    label: "Nikah Ceremony",
-    culturalName: "Nikah & Walimah",
+    label: "Wedding Reception",
+    culturalName: "Wedding Reception",
 
-    date: "Monday, 27 July 2026",
+    date: "Sunday, 26 July 2026",
 
     secondaryDate:
-      "12 Safar 1448 AH",
+      "11 Safar 1448 AH",
 
-    time: "11:30 AM onwards",
+    time: "12:00 AM onwards",
 
-    venue: "Sumangali Kalyana Mandapam",
+    venue: "Ashirvad Lawns - Convention Centre",
 
     address:
-      "Sumangali, 37/176 TC Land Rd, Kallai, Road, Panniyankara, Kozhikode, Kerala 673003, India",
+      "Mini bypass road Karaparamba, Eranhipaalam, junction, Kozhikode, Kerala 673010, India",
 
     maps:
-      "https://share.google/e8Pjtuf2Rbm4rtwy8",
+      "https://share.google/OpOnpyyYtZz3B1044",
 
-    iso: "2026-07-27T11:30:00+05:30",
+    iso: "2026-07-26T12:00:00+05:30",
   },
 
   closingBlessing:
-    "\"And of His signs is that He created for you from yourselves mates that you may find tranquility in them; and He placed between you affection and mercy.\" (Quran 30:21)",
+    "\"And We Created you in pairs.\" (Quran 78:8)",
 
   closingWord: "Alhamdulillah",
 
   closingScript: "With prayers & gratitude",
 
   footerTagline:
-    "Crafted with love · Razeen & Aaliya · 2026",
+    "Crafted with love · Ajab & Amreen · 2026",
 };
