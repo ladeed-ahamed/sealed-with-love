@@ -3,14 +3,14 @@ export const wedding = {
 
   groom: {
     firstName: "Ajab",
-    name: "Ajab Mohammed Bava C",
+    name: "Ajab Mohammed Bava",
     subtitle: "S/O Mohammed Arif Cheriyakam & Shameena Cheriya Kolikkal",
   },
 
   bride: {
     firstName: "Amreen",
     name: "Amreen Iskander",
-    subtitle: "D/O Iskander Mamu Cheriye Arakkal & Aneesa",
+    subtitle: "D/O Iskander Mamu Koyassan Veedu & Aneesa Muchuntiyakam",
   },
 
   openingLine: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",

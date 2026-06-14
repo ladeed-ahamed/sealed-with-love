@@ -8,7 +8,6 @@ import { wedding } from "@/lib/wedding-data";
 import { DrawnEnvelope } from "@/components/wedding/DrawnEnvelope";
 import { DialogueBox } from "@/components/wedding/DialogueBox";
 import { DrawnCountdown } from "@/components/wedding/DrawnCountdown";
-import { MusicPlayer } from "@/components/wedding/MusicPlayer";
 import { RetroCoupleCard } from "@/components/wedding/RetroCoupleCard";
 import { RetroEventCard } from "@/components/wedding/RetroEventCard";
 
@@ -103,7 +102,6 @@ function Index() {
 
   return (
     <div className="relative min-h-[100dvh] w-full overflow-hidden bg-transparent">
-      <MusicPlayer />
 
       {/* Sketchy Loading Overlay */}
       {gameState === "loading" && !canvasLoaded && (
