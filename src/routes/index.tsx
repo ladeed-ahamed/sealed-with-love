@@ -191,7 +191,7 @@ function Index() {
               <div className="flex flex-col items-center w-full gap-2">
                 {/* Groom block */}
                 <div className="flex flex-col items-center">
-                  <h3 className="font-script text-5xl sm:text-6xl md:text-7xl text-ink font-medium leading-none">
+                  <h3 className="font-script text-5xl sm:text-6xl md:text-7xl text-ink font-normal leading-none">
                     {wedding.groom.name}
                   </h3>
                   <p className="text-[11px] text-ink/70 font-medium max-w-[280px] mt-2 leading-relaxed">
@@ -206,7 +206,7 @@ function Index() {
 
                 {/* Bride block */}
                 <div className="flex flex-col items-center">
-                  <h3 className="font-script text-5xl sm:text-6xl md:text-7xl text-ink font-medium leading-none">
+                  <h3 className="font-script text-5xl sm:text-6xl md:text-7xl text-ink font-normal leading-none">
                     {wedding.bride.name}
                   </h3>
                   <p className="text-[11px] text-ink/70 font-medium max-w-[280px] mt-2 leading-relaxed">
