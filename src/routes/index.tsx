@@ -193,7 +193,10 @@ function Index() {
                 {/* Groom block */}
                 <div className="flex flex-col items-center">
                   <h3 className="font-script text-5xl sm:text-6xl md:text-7xl text-ink font-normal leading-none">
-                    {wedding.groom.name}
+                    <span className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl mr-0.5 select-none inline-block">
+                      {wedding.groom.name[0]}
+                    </span>
+                    {wedding.groom.name.slice(1)}
                   </h3>
                   <p className="text-[11px] text-ink/70 font-medium max-w-[280px] mt-2 leading-relaxed">
                     {wedding.groom.subtitle}
@@ -208,7 +211,10 @@ function Index() {
                 {/* Bride block */}
                 <div className="flex flex-col items-center">
                   <h3 className="font-script text-5xl sm:text-6xl md:text-7xl text-ink font-normal leading-none">
-                    {wedding.bride.name}
+                    <span className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl mr-0.5 select-none inline-block">
+                      {wedding.bride.name[0]}
+                    </span>
+                    {wedding.bride.name.slice(1)}
                   </h3>
                   <p className="text-[11px] text-ink/70 font-medium max-w-[280px] mt-2 leading-relaxed">
                     {wedding.bride.subtitle}

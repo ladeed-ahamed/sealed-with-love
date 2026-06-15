@@ -152,13 +152,13 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
           }
         >
           <div className="text-center leading-none flex flex-col items-center justify-center">
-            <div className="font-script text-3xl text-white sm:text-4xl select-none">
+            <div className="font-script text-xl text-white sm:text-2xl select-none">
               {wedding.groom.firstName[0].toUpperCase()}
             </div>
-            <div className="font-label text-[9px] tracking-widest text-white/85 my-1 uppercase font-bold select-none">
+            <div className="font-label text-[8px] tracking-widest text-white/80 my-0.5 uppercase font-bold select-none">
               &amp;
             </div>
-            <div className="font-script text-3xl text-white sm:text-4xl select-none">
+            <div className="font-script text-xl text-white sm:text-2xl select-none">
               {wedding.bride.firstName[0].toUpperCase()}
             </div>
           </div>
