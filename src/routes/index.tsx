@@ -196,7 +196,7 @@ function Index() {
               <div className="flex flex-col items-center w-full gap-2">
                 {/* Groom block */}
                 <div className="flex flex-col items-center">
-                  <h3 className="font-script text-5xl sm:text-6xl md:text-7xl text-ink font-normal leading-none">
+                  <h3 className="font-display text-3xl sm:text-4xl md:text-5xl text-ink font-semibold italic tracking-wide leading-none">
                     {wedding.groom.name}
                   </h3>
                   <p className="text-[11px] text-ink/70 font-medium max-w-[280px] mt-2 leading-relaxed">
@@ -205,13 +205,13 @@ function Index() {
                 </div>
 
                 {/* Ampersand */}
-                <div className="font-script text-5xl sm:text-6xl text-gold/90 select-none py-1 transform translate-y-[-4px]">
+                <div className="font-display font-semibold italic text-3xl sm:text-4xl text-gold/90 select-none py-1">
                   &amp;
                 </div>
 
                 {/* Bride block */}
                 <div className="flex flex-col items-center">
-                  <h3 className="font-script text-5xl sm:text-6xl md:text-7xl text-ink font-normal leading-none">
+                  <h3 className="font-display text-3xl sm:text-4xl md:text-5xl text-ink font-semibold italic tracking-wide leading-none">
                     {wedding.bride.name}
                   </h3>
                   <p className="text-[11px] text-ink/70 font-medium max-w-[280px] mt-2 leading-relaxed">
