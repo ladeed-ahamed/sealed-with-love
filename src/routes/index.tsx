@@ -106,7 +106,7 @@ function Index() {
   return (
     <div className="relative min-h-[100dvh] w-full bg-transparent overflow-x-hidden">
       {/* Background Floating Particles */}
-      <FloatingParticles count={30} />
+      <FloatingParticles count={60} />
 
       {/* Background Music Player */}
       <MusicPlayer />

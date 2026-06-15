@@ -29,20 +29,20 @@ const Dust = ({ size }: { size: number }) => (
   </svg>
 );
 
-export function FloatingParticles({ count = 35 }: { count?: number }) {
+export function FloatingParticles({ count = 55 }: { count?: number }) {
   const particles = useMemo<Particle[]>(() => {
     return Array.from({ length: count }, (_, i) => {
       const r = (i * 9301 + 49297) % 233280;
       const rand = (n: number) => ((r * (n + 1)) % 1000) / 1000;
-      const k = i % 3;
+      const k = i % 4;
       return {
         id: i,
         left: rand(1) * 100,
         size: 8 + rand(2) * 16,
         duration: 16 + rand(3) * 20,
         delay: rand(4) * 14,
-        drift: (rand(5) - 0.5) * 100,
-        kind: k === 0 ? "heart" : k === 1 ? "petal" : "dust",
+        drift: (rand(5) - 0.5) * 120,
+        kind: k === 0 || k === 3 ? "heart" : k === 1 ? "petal" : "dust",
       };
     });
   }, [count]);
@@ -50,16 +50,18 @@ export function FloatingParticles({ count = 35 }: { count?: number }) {
   return (
     <div className="pointer-events-none fixed inset-0 z-30 overflow-hidden">
       {particles.map((p) => {
-        let color = "text-gold-light/30";
+        let color = "text-rosegold-soft/40";
         let particleElement = <Heart size={p.size} />;
 
         if (p.kind === "petal") {
           color = "text-gold-light/20";
           particleElement = <Petal size={p.size} />;
         } else if (p.kind === "dust") {
-          color = "text-gold/25";
+          color = "text-gold/20";
           particleElement = <Dust size={p.size * 0.6} />;
         }
+
+        const swayX = [0, p.drift * 0.4, p.drift * -0.2, p.drift * 0.8, p.drift];
 
         return (
           <motion.div
@@ -69,9 +71,14 @@ export function FloatingParticles({ count = 35 }: { count?: number }) {
             initial={{ y: 0, x: 0, opacity: 0, rotate: 0 }}
             animate={{
               y: "-120vh",
-              x: p.drift,
-              opacity: [0, 0.7, 0.7, 0],
-              rotate: [0, p.drift > 0 ? 180 : -180],
+              x: swayX,
+              opacity: [0, 0.8, 0.8, 0],
+              rotate: [
+                0,
+                p.drift > 0 ? 90 : -90,
+                p.drift > 0 ? 180 : -180,
+                p.drift > 0 ? 270 : -270,
+              ],
             }}
             transition={{
               duration: p.duration,
