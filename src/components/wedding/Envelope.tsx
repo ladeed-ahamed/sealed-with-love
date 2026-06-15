@@ -151,13 +151,15 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
               : { duration: 3.2, repeat: Infinity, ease: "easeInOut" }
           }
         >
-          <div className="text-center leading-none">
-            <div className="font-script text-[14px] text-white sm:text-base">
-              {wedding.groom.firstName[0]}
+          <div className="text-center leading-none flex flex-col items-center justify-center">
+            <div className="font-script text-3xl text-white sm:text-4xl select-none">
+              {wedding.groom.firstName[0].toUpperCase()}
             </div>
-            <div className="font-label text-[8px] tracking-widest text-white/80 my-0.5">&amp;</div>
-            <div className="font-script text-[14px] text-white sm:text-base">
-              {wedding.bride.firstName[0]}
+            <div className="font-label text-[9px] tracking-widest text-white/85 my-1 uppercase font-bold select-none">
+              &amp;
+            </div>
+            <div className="font-script text-3xl text-white sm:text-4xl select-none">
+              {wedding.bride.firstName[0].toUpperCase()}
             </div>
           </div>
         </motion.div>

@@ -29,7 +29,7 @@ export const wedding = {
 
     secondaryDate: "11 Safar 1448 AH",
 
-    time: "12:00 AM onwards",
+    time: "12:30 PM onwards",
 
     venue: "Ashirvad Lawns - Convention Centre",
 
