@@ -7,6 +7,7 @@ import { Envelope } from "@/components/wedding/Envelope";
 import { DrawnCountdown } from "@/components/wedding/DrawnCountdown";
 import { CornerOrnament } from "@/components/wedding/CornerOrnament";
 import { FloatingParticles } from "@/components/wedding/FloatingParticles";
+import { ScratchToReveal } from "@/components/wedding/ScratchToReveal";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -243,14 +244,18 @@ function Index() {
                   <span className="text-[9px] sm:text-[10px] tracking-[0.25em] text-gold uppercase font-bold block mb-2">
                     DATE & TIME
                   </span>
-                  <p className="font-display text-base font-bold text-ink">{wedding.event.date}</p>
-                  <p className="font-body text-[11px] text-ink/70 font-medium mt-0.5">
-                    {wedding.event.secondaryDate}
-                  </p>
-                  <div className="w-8 h-px bg-gold/25 mx-auto my-2.5"></div>
-                  <p className="font-display text-base font-semibold text-ink">
-                    {wedding.event.time}
-                  </p>
+                  <ScratchToReveal>
+                    <p className="font-display text-base font-bold text-ink">
+                      {wedding.event.date}
+                    </p>
+                    <p className="font-body text-[11px] text-ink/70 font-medium mt-0.5">
+                      {wedding.event.secondaryDate}
+                    </p>
+                    <div className="w-8 h-px bg-gold/25 mx-auto my-2.5"></div>
+                    <p className="font-display text-base font-semibold text-ink">
+                      {wedding.event.time}
+                    </p>
+                  </ScratchToReveal>
                 </div>
 
                 {/* Venue Panel */}

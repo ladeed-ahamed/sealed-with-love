@@ -25,8 +25,8 @@ export function ScratchToReveal({ children }: ScratchToRevealProps) {
 
     // Create striped/textured gold gradient matching the screenshot
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, "oklch(0.68 0.14 65)"); // rosegold
-    gradient.addColorStop(1, "oklch(0.58 0.12 60)"); // darker rosegold
+    gradient.addColorStop(0, "oklch(0.76 0.14 85)"); // warm gold
+    gradient.addColorStop(1, "oklch(0.65 0.12 80)"); // darker gold
 
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
