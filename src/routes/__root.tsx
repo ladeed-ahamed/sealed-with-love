@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { wedding } from "../lib/wedding-data";
 
 function NotFoundComponent() {
   return (
@@ -78,12 +79,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ajab & Amreen — A Wedding Invitation" },
+      { title: `${wedding.bride.firstName} & ${wedding.groom.firstName} — A Wedding Invitation` },
       {
         name: "description",
         content: "You are cordially invited to witness the celebration of love and togetherness.",
       },
-      { property: "og:title", content: "Ajab & Amreen — A Wedding Invitation" },
+      { property: "og:title", content: `${wedding.bride.firstName} & ${wedding.groom.firstName} — A Wedding Invitation` },
       {
         property: "og:description",
         content: "You are cordially invited to witness the celebration of love and togetherness.",
@@ -92,6 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
     ],
     links: [
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg?v=2" },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico?v=2" },
+      { rel: "shortcut icon", href: "/favicon.svg?v=2" },
+      { rel: "apple-touch-icon", href: "/favicon.svg?v=2" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },

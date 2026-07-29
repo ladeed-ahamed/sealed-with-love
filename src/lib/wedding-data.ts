@@ -1,16 +1,16 @@
 export const wedding = {
   hosts: "Together with their families",
 
-  groom: {
-    firstName: "Ajab",
-    name: "Ajab Mohammed Bava",
-    subtitle: "S/O Mohammed Arif Cheriyakam & Shameena Cheriya Kolikkal",
+  bride: {
+    firstName: "Manal",
+    name: "Manal Mohammed Ali",
+    subtitle: "D/O Reshman Ali P.M & Amina A.N",
   },
 
-  bride: {
-    firstName: "Amreen",
-    name: "Amreen Iskander",
-    subtitle: "D/O Iskander Mamu Koyassan Veedu & Aneesa Muchuntiyakam",
+  groom: {
+    firstName: "Ummer",
+    name: "Ummer Raes",
+    subtitle: "S/O Moosa Koya C.P & Balkees P.P",
   },
 
   openingLine: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
@@ -25,20 +25,20 @@ export const wedding = {
     label: "Wedding Reception",
     culturalName: "Wedding Reception",
 
-    date: "Sunday, 26 July 2026",
+    date: "Sunday, 30 August 2026",
 
-    secondaryDate: "11 Safar 1448 AH",
+    secondaryDate: "15 Safar 1448 AH",
 
-    time: "12:30 PM onwards",
+    time: "05:30 PM onwards",
 
-    venue: "Ashirvad Lawns - Convention Centre",
+    venue: "Oak Convention Centre",
 
     address:
-      "Mini bypass road Karaparamba, Eranhipaalam, junction, Kozhikode, Kerala 673010, India",
+      "Babu Raj Rd, Near Kallai Bridge,Premier, Kallai, Kozhikode, Kerala 673003, India, India",
 
-    maps: "https://share.google/OpOnpyyYtZz3B1044",
+    maps: "https://maps.app.goo.gl/ekGdX3vmDwLCEfQs9",
 
-    iso: "2026-07-26T12:00:00+05:30",
+    iso: "2026-08-30T17:30:00+05:30",
   },
 
   closingBlessing: '"And We Created you in pairs." (Quran 78:8)',
@@ -47,5 +47,7 @@ export const wedding = {
 
   closingScript: "With prayers & gratitude",
 
-  footerTagline: "Tm Cherooty",
+  footerTagline: "Your loving brothers & sisters",
+
+  galleryImages: [] as Array<{ src: string; alt: string; aspectRatio: string }>,
 };

@@ -153,13 +153,13 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
         >
           <div className="text-center leading-none flex flex-col items-center justify-center">
             <div className="font-display font-bold text-xl text-white sm:text-2xl select-none">
-              {wedding.groom.firstName[0].toUpperCase()}
+              {wedding.bride.firstName[0].toUpperCase()}
             </div>
             <div className="font-label text-[8px] tracking-widest text-white/80 my-1 uppercase font-bold select-none">
               &amp;
             </div>
             <div className="font-display font-bold text-xl text-white sm:text-2xl select-none">
-              {wedding.bride.firstName[0].toUpperCase()}
+              {wedding.groom.firstName[0].toUpperCase()}
             </div>
           </div>
         </motion.div>
@@ -229,7 +229,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }) {
       ))}
 
       <span className="sr-only">
-        {wedding.groom.firstName} and {wedding.bride.firstName}
+        {wedding.bride.firstName} and {wedding.groom.firstName}
       </span>
     </div>
   );

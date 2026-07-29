@@ -7,7 +7,6 @@ import { Envelope } from "@/components/wedding/Envelope";
 import { DrawnCountdown } from "@/components/wedding/DrawnCountdown";
 import { CornerOrnament } from "@/components/wedding/CornerOrnament";
 import { FloatingParticles } from "@/components/wedding/FloatingParticles";
-import { ScratchToReveal } from "@/components/wedding/ScratchToReveal";
 import { MusicPlayer } from "@/components/wedding/MusicPlayer";
 
 export const Route = createFileRoute("/")({
@@ -194,13 +193,13 @@ function Index() {
               </span>
 
               <div className="flex flex-col items-center w-full gap-2">
-                {/* Groom block */}
+                {/* Bride block */}
                 <div className="flex flex-col items-center">
                   <h3 className="font-display text-3xl sm:text-4xl md:text-5xl text-ink font-semibold italic tracking-wide leading-none">
-                    {wedding.groom.name}
+                    {wedding.bride.name}
                   </h3>
                   <p className="text-[11px] text-ink/70 font-medium max-w-[280px] mt-2 leading-relaxed">
-                    {wedding.groom.subtitle}
+                    {wedding.bride.subtitle}
                   </p>
                 </div>
 
@@ -209,13 +208,13 @@ function Index() {
                   &amp;
                 </div>
 
-                {/* Bride block */}
+                {/* Groom block */}
                 <div className="flex flex-col items-center">
                   <h3 className="font-display text-3xl sm:text-4xl md:text-5xl text-ink font-semibold italic tracking-wide leading-none">
-                    {wedding.bride.name}
+                    {wedding.groom.name}
                   </h3>
                   <p className="text-[11px] text-ink/70 font-medium max-w-[280px] mt-2 leading-relaxed">
-                    {wedding.bride.subtitle}
+                    {wedding.groom.subtitle}
                   </p>
                 </div>
               </div>
@@ -248,18 +247,16 @@ function Index() {
                   <span className="text-[9px] sm:text-[10px] tracking-[0.25em] text-gold uppercase font-bold block mb-2">
                     DATE & TIME
                   </span>
-                  <ScratchToReveal>
-                    <p className="font-display text-base font-bold text-ink">
-                      {wedding.event.date}
-                    </p>
-                    <p className="font-body text-[11px] text-ink/70 font-medium mt-0.5">
-                      {wedding.event.secondaryDate}
-                    </p>
-                    <div className="w-8 h-px bg-gold/25 mx-auto my-2.5"></div>
-                    <p className="font-display text-base font-semibold text-ink">
-                      {wedding.event.time}
-                    </p>
-                  </ScratchToReveal>
+                  <p className="font-display text-base font-bold text-ink">
+                    {wedding.event.date}
+                  </p>
+                  <p className="font-body text-[11px] text-ink/70 font-medium mt-0.5">
+                    {wedding.event.secondaryDate}
+                  </p>
+                  <div className="w-8 h-px bg-gold/25 mx-auto my-2.5"></div>
+                  <p className="font-display text-base font-semibold text-ink">
+                    {wedding.event.time}
+                  </p>
                 </div>
 
                 {/* Venue Panel */}

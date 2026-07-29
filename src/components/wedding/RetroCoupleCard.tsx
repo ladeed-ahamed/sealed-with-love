@@ -4,7 +4,7 @@ import { wedding } from "@/lib/wedding-data";
 export function RetroCoupleCard() {
   return (
     <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 w-full max-w-4xl px-4 pointer-events-auto">
-      {/* Groom Card */}
+      {/* Bride Card */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -12,21 +12,23 @@ export function RetroCoupleCard() {
         whileHover={{ y: -4 }}
         className="drawn-card w-full md:w-[290px] bg-white/90 p-6 md:p-8 flex flex-col items-center text-center select-none"
       >
-        <div className="name-tag mb-4 text-xs tracking-[0.2em] bg-gradient-to-r from-gold to-gold/85 shadow-sm uppercase font-semibold">
-          Groom
+        <div className="name-tag mb-4 text-xs tracking-[0.2em] bg-gradient-to-r from-rosegold to-rosegold/85 shadow-sm uppercase font-semibold">
+          Bride
         </div>
 
-        {/* Calligraphic Monogram for Groom */}
-        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border border-gold/30 flex items-center justify-center bg-gold/5 mb-4 shadow-[0_4px_12px_rgba(212,175,55,0.08)]">
-          <span className="font-script text-4xl md:text-5xl text-gold mt-1">A</span>
+        {/* Calligraphic Monogram for Bride */}
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border border-rosegold/30 flex items-center justify-center bg-rosegold/5 mb-4 shadow-[0_4px_12px_rgba(183,110,121,0.08)]">
+          <span className="font-script text-4xl md:text-5xl text-rosegold mt-1">
+            {wedding.bride.firstName[0].toUpperCase()}
+          </span>
         </div>
 
         <h3 className="font-display text-xl md:text-2xl text-foreground font-semibold mb-2 tracking-wide">
-          {wedding.groom.name}
+          {wedding.bride.name}
         </h3>
 
         <p className="font-body text-xs md:text-sm leading-relaxed text-foreground/75 italic px-2">
-          {wedding.groom.subtitle}
+          {wedding.bride.subtitle}
         </p>
       </motion.div>
 
@@ -54,7 +56,7 @@ export function RetroCoupleCard() {
         </svg>
       </motion.div>
 
-      {/* Bride Card */}
+      {/* Groom Card */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -62,21 +64,23 @@ export function RetroCoupleCard() {
         whileHover={{ y: -4 }}
         className="drawn-card w-full md:w-[290px] bg-white/90 p-6 md:p-8 flex flex-col items-center text-center select-none"
       >
-        <div className="name-tag mb-4 text-xs tracking-[0.2em] bg-gradient-to-r from-rosegold to-rosegold/85 shadow-sm uppercase font-semibold">
-          Bride
+        <div className="name-tag mb-4 text-xs tracking-[0.2em] bg-gradient-to-r from-gold to-gold/85 shadow-sm uppercase font-semibold">
+          Groom
         </div>
 
-        {/* Calligraphic Monogram for Bride */}
-        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border border-rosegold/30 flex items-center justify-center bg-rosegold/5 mb-4 shadow-[0_4px_12px_rgba(183,110,121,0.08)]">
-          <span className="font-script text-4xl md:text-5xl text-rosegold mt-1">A</span>
+        {/* Calligraphic Monogram for Groom */}
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border border-gold/30 flex items-center justify-center bg-gold/5 mb-4 shadow-[0_4px_12px_rgba(212,175,55,0.08)]">
+          <span className="font-script text-4xl md:text-5xl text-gold mt-1">
+            {wedding.groom.firstName[0].toUpperCase()}
+          </span>
         </div>
 
         <h3 className="font-display text-xl md:text-2xl text-foreground font-semibold mb-2 tracking-wide">
-          {wedding.bride.name}
+          {wedding.groom.name}
         </h3>
 
         <p className="font-body text-xs md:text-sm leading-relaxed text-foreground/75 italic px-2">
-          {wedding.bride.subtitle}
+          {wedding.groom.subtitle}
         </p>
       </motion.div>
     </div>

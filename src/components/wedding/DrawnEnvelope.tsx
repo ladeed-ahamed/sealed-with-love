@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Text, Line } from "@react-three/drei";
+import { wedding } from "@/lib/wedding-data";
 
 export function DrawnEnvelope({ onClick }: { onClick?: () => void }) {
   const groupRef = useRef<THREE.Group>(null);
@@ -154,7 +155,7 @@ export function DrawnEnvelope({ onClick }: { onClick?: () => void }) {
         anchorX="center"
         anchorY="middle"
       >
-        A & A
+        {`${wedding.bride.firstName[0].toUpperCase()} & ${wedding.groom.firstName[0].toUpperCase()}`}
       </Text>
 
       {/* Loading Text below the envelope */}
